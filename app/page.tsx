@@ -1,26 +1,26 @@
-"use client";
+"use client"
 
-import { useState } from "react";
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
 
 const Home = () => {
-  const [text] = useState("Bem-vindo ao Barber");
+  const [label, setLabel] = useState("Teste")
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center gap-6 bg-slate-950 text-white px-4 py-12">
-      <div className="max-w-xl text-center">
-        <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
-          {text}
-        </h1>
-        <p className="mt-4 text-lg text-slate-300">
-          Agende seu corte com estilo e aproveite um atendimento exclusivo.
+    <main className="flex min-h-screen items-center justify-center bg-slate-950 p-6 text-white">
+      <div className="space-y-6 text-center">
+        <h1 className="text-3xl font-bold">Bem-vindo ao Barber</h1>
+        <p className="max-w-md text-slate-300">
+          Clique no botão para ver o texto mudar.
         </p>
+        <Button
+          onClick={() => setLabel(label === "Teste" ? "Feito!" : "Teste")}
+        >
+          {label}
+        </Button>
       </div>
-
-      <button className="rounded-full bg-red-500 px-8 py-3 text-base font-semibold text-white transition hover:bg-red-600">
-        Agendar agora
-      </button>
     </main>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home
