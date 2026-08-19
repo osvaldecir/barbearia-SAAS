@@ -3,6 +3,7 @@ import localFont from "next/font/local"
 import "./globals.css"
 import { Inter } from "next/font/google"
 import { cn } from "@/app/lib/utils"
+import Header from "@/components/header"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
@@ -32,7 +33,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <h1>layaute</h1>
+        <Header />
         {children}
       </body>
     </html>

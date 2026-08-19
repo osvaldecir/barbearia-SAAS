@@ -1,0 +1,20 @@
+{
+  "React functional component (TSX)": {
+    "scope": "typescriptreact",
+    "prefix": "sfc",
+    "body": [
+      "interface ${1:Props} {",
+      "  $2",
+      "}",
+      "",
+      "const ${3:ComponentName}: React.FC<${1:Props}> = ({ $4 }) => {",
+      "  return (",
+      "    <div>$0</div>",
+      "  );",
+      "};",
+      "",
+      "export default ${3:ComponentName};"
+    ],
+    "description": "Create a React functional component in TSX"
+  }
+}
