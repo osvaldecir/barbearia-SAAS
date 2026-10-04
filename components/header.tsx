@@ -16,7 +16,7 @@ const Header = () => {
 
         <Image
           alt="fsw"
-          src="/logo02.png"
+          src="/burgue2.png.png"
           height={18}
           width={30}
         />
