@@ -1,0 +1,17 @@
+import Image from "next/image"
+
+const Header = () => {
+  return (
+    <header className="border-b border-border bg-background/80 backdrop-blur-sm">
+      <div className="relative mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+        <div className="flex items-center gap-2">
+          <Image alt="fsW-barber" src="/lobop.png" height={18} width={120} />
+        </div>
+
+        <Image alt="fsw" src="/logo2.png" height={18} width={30} />
+      </div>
+    </header>
+  )
+}
+
+export default Header
