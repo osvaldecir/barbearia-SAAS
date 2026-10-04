@@ -1,12 +1,14 @@
 "use client"
 
-const Home = () => {
+
+
+export default function Home() {
   return (
-    <div>
-      {/* Home sem botão */}
-    </div>
+    <main className="flex min-h-screen items-center justify-center bg-background">
+      <div className="flex flex-col items-center gap-4 text-center">
+
+        
+      </div>
+    </main>
   )
 }
-
-export default Home
- 
