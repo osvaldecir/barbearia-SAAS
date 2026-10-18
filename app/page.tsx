@@ -28,7 +28,7 @@ export default function Home() {
         </div>
 
         <Image
-          src="/banner01.png"
+          src="/bannerP.png"
           alt="FSW Barber"
           width={220}
           height={35}
@@ -49,6 +49,7 @@ export default function Home() {
             <Badge className="rounded-full bg-[#f7e257] text-black hover:bg-[#f7e257]">
               Confirmado
             </Badge>
+            <h3>Corte de Cabelo</h3>
           </div>
         </article>
       </section>
