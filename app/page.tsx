@@ -80,16 +80,11 @@ export default async function Home() {
       <div className="relative mx-auto max-w-6xl">
         <section className="mb-8 flex flex-col gap-6 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-[#f7e257]">
-              FSW Barber
-            </p>
-            <h1 className="max-w-2xl text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
-              Seu próximo corte começa aqui.
+           
+            <h1 className="max-w-2xl font-[var(--font-geist-sans)] text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+              Olá, clienteTester
             </h1>
-            <p className="mt-3 max-w-xl text-sm leading-6 text-zinc-400 sm:text-base">
-              Encontre uma barbearia de confiança e cuide do seu visual com
-              praticidade.
-            </p>
+            
           </div>
 
           <form
@@ -190,9 +185,7 @@ export default async function Home() {
           <section aria-labelledby="barbershops-heading">
             <div className="mb-4 flex items-end justify-between gap-4">
               <div>
-                <p className="mb-1 text-xs font-medium uppercase tracking-[0.2em] text-zinc-500">
-                  Escolha seu próximo destino
-                </p>
+                
                 <h2
                   id="barbershops-heading"
                   className="text-xl font-semibold tracking-tight text-white"
