@@ -9,60 +9,10 @@ export const dynamic = "force-dynamic"
 export default async function Home() {
   const barberShops = await db.barbershop.findMany({
     where: {
-      NOT: [
-        ...[
-          "Barba & Navalha",
-          "Barbearia Elegance",
-          "Barbearia Vintage",
-          "Corte & Estilo Clássico",
-          "Estilo Urbano",
-          "Machado & Tesoura",
-          "The Dapper Den",
-        ].map((name) => ({
-          name: {
-            equals: name,
-            mode: "insensitive" as const,
-          },
-        })),
-        {
-          name: {
-            contains: "Cabelo & Cia",
-            mode: "insensitive" as const,
-          },
-        },
-        {
-          AND: [
-            {
-              name: {
-                contains: "Corte",
-                mode: "insensitive" as const,
-              },
-            },
-            {
-              name: {
-                contains: "Estilo",
-                mode: "insensitive" as const,
-              },
-            },
-          ],
-        },
-        {
-          AND: [
-            {
-              name: {
-                contains: "Estilo",
-                mode: "insensitive" as const,
-              },
-            },
-            {
-              name: {
-                contains: "Clássico",
-                mode: "insensitive" as const,
-              },
-            },
-          ],
-        },
-      ],
+      name: {
+        equals: "shinider",
+        mode: "insensitive",
+      },
     },
     select: {
       id: true,
@@ -81,7 +31,7 @@ export default async function Home() {
         <section className="mb-8 flex flex-col gap-6 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
           <div>
            
-            <h1 className="max-w-2xl font-[var(--font-geist-sans)] text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+            <h1 className="max-w-2xl font-[family-name:var(--font-geist-sans)] text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
               Olá, clienteTester
             </h1>
             

@@ -1,7 +1,16 @@
-import "dotenv/config";
-import { PrismaClient } from "@prisma/client";
+import "dotenv/config"
+import { PrismaNeon } from "@prisma/adapter-neon"
+import { PrismaClient } from "../generated/prisma/client"
 
-const prisma = new PrismaClient();
+const connectionString = process.env.DATABASE_URL
+
+if (!connectionString) {
+  throw new Error("DATABASE_URL precisa estar definida para conectar ao banco.")
+}
+
+const prisma = new PrismaClient({
+  adapter: new PrismaNeon({ connectionString }),
+})
 
 async function seedDatabase() {
   try {
@@ -16,9 +25,12 @@ async function seedDatabase() {
       "https://utfs.io/f/60f24f5c-9ed3-40ba-8c92-0cd1dcd043f9-16w.png",
       "https://utfs.io/f/f64f1bd4-59ce-4ee3-972d-2399937eeafc-16x.png",
       "https://utfs.io/f/e995db6d-df96-4658-99f5-11132fd931e1-17j.png",
-    ];
+      "https://utfs.io/f/e995db6d-df96-4658-99f5-11132fd931e1-17j.png",
+      "https://utfs.io/f/e995db6d-df96-4658-99f5-11132fd931e1-17j.png",
+    ]
 
     const creativeNames = [
+      "shinider",
       "Barbearia Vintage",
       "Corte & Estilo",
       "Barba & Navalha",
@@ -29,9 +41,11 @@ async function seedDatabase() {
       "Aparência Impecável",
       "Estilo Urbano",
       "Estilo Clássico",
-    ];
+      "Excelência em Beleza",
+    ]
 
     const addresses = [
+      "rua pernambuco, 123",
       "Rua da Barbearia, 123",
       "Avenida dos Cortes, 456",
       "Praça da Barba, 789",
@@ -42,7 +56,8 @@ async function seedDatabase() {
       "Praça da Aparência, 505",
       "Rua Urbana, 606",
       "Avenida Clássica, 707",
-    ];
+      "Rua da Barbearia, 123",
+    ]
 
     const services = [
       {
@@ -93,19 +108,50 @@ async function seedDatabase() {
         imageUrl:
           "https://utfs.io/f/8a457cda-f768-411d-a737-cdb23ca6b9b5-b3pegf.png",
       },
-    ];
+      {
+        name: "shinider",
+        description: "excelencia em beleza masculina.",
+        price: 25.0,
+        duration: 25,
+        imageUrl:
+          "https://utfs.io/f/8a457cda-f768-411d-a737-cdb23ca6b9b5-b3pegf.png",
+      },
+    ]
 
     const existingBarbershops = await prisma.barbershop.findMany({
-      select: { name: true },
-    });
-
-    const existingNames = new Set(existingBarbershops.map((shop) => shop.name));
+      select: { id: true, name: true },
+    })
 
     // Criar todas as barbearias e seus serviços associados em paralelo
     const barbershopPromises = creativeNames.map(async (name, i) => {
-      if (existingNames.has(name)) {
-        console.log(`Barbearia já existe, pulando: ${name}`);
-        return;
+      const existingBarbershop = existingBarbershops.find(
+        (shop) => shop.name === name,
+      )
+
+      if (existingBarbershop) {
+        const existingServices = await prisma.barbershopService.findMany({
+          where: { barbershopId: existingBarbershop.id },
+          select: { name: true },
+        })
+        const existingServiceNames = new Set(
+          existingServices.map((service) => service.name),
+        )
+        const missingServices = services.filter(
+          (service) => !existingServiceNames.has(service.name),
+        )
+
+        if (missingServices.length > 0) {
+          await prisma.barbershopService.createMany({
+            data: missingServices.map((service) => ({
+              ...service,
+              barbershopId: existingBarbershop.id,
+            })),
+          })
+          console.log(`Serviços ausentes adicionados: ${name}`)
+        } else {
+          console.log(`Barbearia já possui os serviços: ${name}`)
+        }
+        return
       }
 
       await prisma.barbershop.create({
@@ -122,20 +168,21 @@ async function seedDatabase() {
             },
           },
         },
-      });
-    });
+      })
+    })
 
-    await Promise.all(barbershopPromises);
-    console.log("Banco de dados populado com sucesso!");
+    await Promise.all(barbershopPromises)
+    console.log("Banco de dados populado com sucesso!")
   } catch (error) {
-    console.error("Erro ao criar as barbearias:", error);
+    console.error("Erro ao criar as barbearias:", error)
+    throw error
   } finally {
     // Garante que o disconnect será chamado mesmo em caso de erro
-    await prisma.$disconnect();
+    await prisma.$disconnect()
   }
 }
 
 seedDatabase().catch((error) => {
-  console.error("Erro ao executar o seed:", error);
-  process.exit(1);
-});
+  console.error("Erro ao executar o seed:", error)
+  process.exit(1)
+})
