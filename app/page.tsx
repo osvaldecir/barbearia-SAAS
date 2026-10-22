@@ -24,6 +24,15 @@ export default async function Home() {
     orderBy: { name: "asc" },
   })
 
+  const galleryPhotos = [
+    "/fotopb01.jpg",
+    "/fotobp02.jpg",
+    "/fotobp03.jpg",
+    "/fotobp04.jpg",
+    "/fotobp05.jpg",
+    "/fotobp06.jpg",
+  ]
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#080808] px-4 pb-16 pt-8 text-white sm:px-6 lg:px-8 lg:pt-12">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-[radial-gradient(ellipse_at_top,_rgba(247,226,87,0.09),_transparent_65%)]" />
@@ -72,8 +81,8 @@ export default async function Home() {
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/45 to-black/10" />
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:gap-10">
-          <section aria-labelledby="booking-heading">
+        <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10">
+          <section aria-labelledby="booking-heading" className="lg:order-2">
             <div className="mb-4">
               <p className="mb-1 text-xs font-medium uppercase tracking-[0.2em] text-zinc-500">
                 Sua próxima visita
@@ -134,7 +143,7 @@ export default async function Home() {
 
           <section
             aria-labelledby="barbershops-heading"
-            className="lg:pt-[48px]"
+            className="lg:order-1 lg:pt-[48px]"
           >
             <div className="mb-4 flex items-end justify-between gap-4">
               <div>
@@ -172,6 +181,37 @@ export default async function Home() {
             )}
           </section>
         </div>
+
+        <section aria-labelledby="gallery-heading" className="mt-12">
+          <div className="mb-5">
+            <p className="mb-1 text-xs font-medium uppercase tracking-[0.2em] text-zinc-500">
+              Conheça nosso espaço
+            </p>
+            <h2
+              id="gallery-heading"
+              className="text-xl font-semibold tracking-tight text-white"
+            >
+              Galeria de fotos
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+            {galleryPhotos.map((photo, index) => (
+              <div
+                key={photo}
+                className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-[#f7e257]/50 bg-[#121212]"
+              >
+                <Image
+                  src={photo}
+                  alt={`Foto ${index + 1} da barbearia Shinider`}
+                  fill
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 360px"
+                  className="object-cover transition duration-500 hover:scale-105"
+                />
+              </div>
+            ))}
+          </div>
+        </section>
       </div>
     </main>
   )

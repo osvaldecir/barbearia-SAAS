@@ -1,4 +1,5 @@
 import Image from "next/image"
+import Link from "next/link"
 import { MapPin } from "lucide-react"
 
 type BarbershopItemProps = {
@@ -33,6 +34,14 @@ const BarbershopItem = ({ barbershop }: BarbershopItemProps) => {
           <h3 className="truncate text-base font-semibold text-white">
             {barbershop.name}
           </h3>
+          {barbershop.name.toLowerCase() === "shinider" && (
+            <Link
+              href="#booking-heading"
+              className="mt-3 inline-flex w-full items-center justify-center rounded-lg bg-[#f7e257] px-4 py-2 text-sm font-semibold text-black transition hover:bg-[#ffec70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257] focus-visible:ring-offset-2 focus-visible:ring-offset-[#121212]"
+            >
+              Agendar
+            </Link>
+          )}
           <p className="mt-1 flex items-start gap-1.5 text-sm leading-5 text-zinc-400">
             <MapPin
               aria-hidden="true"
