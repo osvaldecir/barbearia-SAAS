@@ -32,7 +32,7 @@ export default async function Home() {
           <div>
            
             <h1 className="max-w-2xl font-[family-name:var(--font-geist-sans)] text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
-              Olá, clienteTester
+              Olá, <i>ClienteTester</i>
             </h1>
             
           </div>
@@ -132,13 +132,15 @@ export default async function Home() {
             </article>
           </section>
 
-          <section aria-labelledby="barbershops-heading">
+          <section
+            aria-labelledby="barbershops-heading"
+            className="lg:pt-[48px]"
+          >
             <div className="mb-4 flex items-end justify-between gap-4">
               <div>
-                
                 <h2
                   id="barbershops-heading"
-                  className="text-xl font-semibold tracking-tight text-white"
+                  className="sr-only"
                 >
                   Barbearias
                 </h2>
@@ -150,7 +152,7 @@ export default async function Home() {
             </div>
 
             {barberShops.length > 0 ? (
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-4">
                 {barberShops.map((barbershop) => (
                   <BarbershopItem
                     key={barbershop.id}

@@ -42,10 +42,12 @@ const BarbershopItem = ({ barbershop }: BarbershopItemProps) => {
           </p>
         </div>
 
-        <p className="line-clamp-2 min-h-10 text-sm leading-5 text-zinc-500">
-          {barbershop.description ||
-            "Um espaço pensado para cuidar do seu visual e renovar o estilo."}
-        </p>
+        {barbershop.name.toLowerCase() !== "shinider" && (
+          <p className="line-clamp-2 min-h-10 text-sm leading-5 text-zinc-500">
+            {barbershop.description ||
+              "Um espaço pensado para cuidar do seu visual e renovar o estilo."}
+          </p>
+        )}
       </div>
     </article>
   )
