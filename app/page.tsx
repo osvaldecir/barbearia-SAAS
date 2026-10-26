@@ -1,4 +1,9 @@
-import { CalendarDays, Clock3, SearchIcon } from "lucide-react"
+import {
+  CalendarDays,
+  Clock3,
+  MapPin,
+  SearchIcon,
+} from "lucide-react"
 import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
 import BarbershopItem from "@/_components/barbershop-item"
@@ -17,7 +22,6 @@ export default async function Home() {
     select: {
       id: true,
       name: true,
-      address: true,
       description: true,
       imageUrl: true,
     },
@@ -39,11 +43,9 @@ export default async function Home() {
       <div className="relative mx-auto max-w-6xl">
         <section className="mb-8 flex flex-col gap-6 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
           <div>
-           
             <h1 className="max-w-2xl font-[family-name:var(--font-geist-sans)] text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
               Olá, <i>ClienteTester</i>
             </h1>
-            
           </div>
 
           <form
@@ -81,6 +83,22 @@ export default async function Home() {
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/45 to-black/10" />
         </div>
 
+        <div className="mb-8 grid gap-4 md:grid-cols-3">
+          {[
+            { title: "Atendimento premium", text: "Cortes e cuidados com acabamento impecável." },
+            { title: "Ambiente moderno", text: "Estilo, conforto e uma experiência de marca." },
+            { title: "Agendamento rápido", text: "Reserve seu horário em poucos segundos." },
+          ].map((feature) => (
+            <div
+              key={feature.title}
+              className="rounded-2xl border border-white/10 bg-[#121212]/80 p-4 shadow-lg shadow-black/20"
+            >
+              <p className="text-sm font-semibold text-[#f7e257]">{feature.title}</p>
+              <p className="mt-2 text-sm leading-6 text-zinc-400">{feature.text}</p>
+            </div>
+          ))}
+        </div>
+
         <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10">
           <section aria-labelledby="booking-heading" className="lg:order-2">
             <div className="mb-4">
@@ -93,6 +111,87 @@ export default async function Home() {
               >
                 Agendamento
               </h2>
+              <div
+                role="group"
+                aria-label="Serviços disponíveis"
+                className="mt-4 flex flex-wrap gap-2 pb-1"
+              >
+                <button
+                  type="button"
+                  className="inline-flex shrink-0 cursor-pointer items-center gap-2 rounded-lg border border-[#f7e257]/30 bg-[#f7e257]/10 px-3 py-2 text-sm font-medium text-[#f7e257] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="h-4 w-4 bg-[#f7e257]"
+                    style={{
+                      mask: "url('/icon01.png') center / contain no-repeat",
+                      WebkitMask:
+                        "url('/icon01.png') center / contain no-repeat",
+                    }}
+                  />
+                  Cabelo
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex shrink-0 cursor-pointer items-center gap-2 rounded-lg border border-[#f7e257]/30 bg-[#f7e257]/10 px-3 py-2 text-sm font-medium text-[#f7e257] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="h-4 w-4 bg-[#f7e257]"
+                    style={{
+                      mask: "url('/icon02.png') center / contain no-repeat",
+                      WebkitMask:
+                        "url('/icon02.png') center / contain no-repeat",
+                    }}
+                  />
+                  Barba
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex shrink-0 cursor-pointer items-center gap-2 rounded-lg border border-[#f7e257]/30 bg-[#f7e257]/10 px-3 py-2 text-sm font-medium text-[#f7e257] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="h-4 w-4 bg-[#f7e257]"
+                    style={{
+                      mask: "url('/icon03.png') center / contain no-repeat",
+                      WebkitMask:
+                        "url('/icon03.png') center / contain no-repeat",
+                    }}
+                  />
+                  Acabamento
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex shrink-0 cursor-pointer items-center gap-2 rounded-lg border border-[#f7e257]/30 bg-[#f7e257]/10 px-3 py-2 text-sm font-medium text-[#f7e257] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="h-4 w-4 bg-[#f7e257]"
+                    style={{
+                      mask: "url('/icon05.png') center / contain no-repeat",
+                      WebkitMask:
+                        "url('/icon05.png') center / contain no-repeat",
+                    }}
+                  />
+                  Hidratação
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex shrink-0 cursor-pointer items-center gap-2 rounded-lg border border-[#f7e257]/30 bg-[#f7e257]/10 px-3 py-2 text-sm font-medium text-[#f7e257] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="h-4 w-4 bg-[#f7e257]"
+                    style={{
+                      mask: "url('/icon04.png') center / contain no-repeat",
+                      WebkitMask:
+                        "url('/icon04.png') center / contain no-repeat",
+                    }}
+                  />
+                  Todos os serviços
+                </button>
+              </div>
             </div>
 
             <article className="overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#191919] to-[#101010] shadow-xl shadow-black/20">
@@ -138,6 +237,14 @@ export default async function Home() {
                   </div>
                 </div>
               </div>
+
+              <div className="flex items-start gap-2 border-t border-white/10 px-5 py-4 text-sm text-zinc-400">
+                <MapPin
+                  aria-hidden="true"
+                  className="mt-0.5 h-4 w-4 shrink-0 text-[#f7e257]"
+                />
+                <span>Rua Pernambuco, 123</span>
+              </div>
             </article>
           </section>
 
@@ -147,10 +254,7 @@ export default async function Home() {
           >
             <div className="mb-4 flex items-end justify-between gap-4">
               <div>
-                <h2
-                  id="barbershops-heading"
-                  className="sr-only"
-                >
+                <h2 id="barbershops-heading" className="sr-only">
                   Barbearias
                 </h2>
               </div>
@@ -203,7 +307,7 @@ export default async function Home() {
               >
                 <Image
                   src={photo}
-                  alt={`Foto ${index + 1} da barbearia Shinider`}
+                  alt={`Foto ${index + 1} do espaço da barbearia`}
                   fill
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 360px"
                   className="object-cover transition duration-500 hover:scale-105"
@@ -211,6 +315,12 @@ export default async function Home() {
               </div>
             ))}
           </div>
+
+          <footer className="mt-10 border-t border-white/10 pt-6 text-center">
+            <p className="text-sm text-zinc-500">
+              2026 VianaWeb. Todos os direitos reservados.
+            </p>
+          </footer>
         </section>
       </div>
     </main>
