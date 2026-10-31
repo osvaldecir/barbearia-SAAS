@@ -32,7 +32,7 @@ const BarbershopItem = ({ barbershop }: BarbershopItemProps) => {
         <div className="min-w-0">
           {barbershop.name.toLowerCase() === "shinider" && (
             <Link
-              href="#booking-heading"
+              href={`/barbershops/${barbershop.id}`}
               className="mt-5 inline-flex w-full items-center justify-center rounded-lg bg-[#f7e257] px-4 py-2 text-sm font-semibold text-black transition hover:bg-[#ffec70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257] focus-visible:ring-offset-2 focus-visible:ring-offset-[#121212]"
             >
               Agendar
