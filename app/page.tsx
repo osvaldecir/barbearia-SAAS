@@ -58,8 +58,8 @@ export default async function Home() {
             />
             <input
               type="search"
-              aria-label="Buscar barbearias"
-              placeholder="Buscar barbearias..."
+              aria-label="Buscar serviços"
+              placeholder="Buscar serviços..."
               className="h-10 min-w-0 flex-1 bg-transparent px-1 text-sm text-white outline-none placeholder:text-zinc-500"
             />
             <button
@@ -96,6 +96,9 @@ export default async function Home() {
               <p className="text-sm font-semibold text-[#f7e257]">{feature.title}</p>
               <p className="mt-2 text-sm leading-6 text-zinc-400">{feature.text}</p>
             </div>
+
+            
+
           ))}
         </div>
 

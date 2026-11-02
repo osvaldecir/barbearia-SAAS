@@ -1,8 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { notFound } from "next/navigation";
 import { db } from "@/_lib/prisma";
+import ServiceItem from "../service-item";
 
 type BarbershopPageProps = {
   params: {
@@ -13,6 +13,17 @@ type BarbershopPageProps = {
 const BarbershopPage = async ({ params }: BarbershopPageProps) => {
   const barbershop = await db.barbershop.findUnique({
     where: { id: params.id },
+    include: {
+      barbershopServices: {
+        where: {
+          name: {
+            not: "shinider",
+            mode: "insensitive",
+          },
+        },
+        orderBy: { name: "asc" },
+      },
+    },
   });
 
   if (!barbershop) {
@@ -30,14 +41,23 @@ const BarbershopPage = async ({ params }: BarbershopPageProps) => {
           Voltar
         </Link>
       </div>
-      <Image
-        src="/frente.png"
-        alt={`Fachada da barbearia ${barbershop.name}`}
-        width={351}
-        height={393}
-        priority
-        className="h-auto w-auto max-w-full rounded-xl border-2 border-[#f7e257]"
-      />
+      <div className="flex w-full flex-col items-start gap-6">
+        <section className="w-full flex-1 space-y-4">
+          {barbershop.barbershopServices.length > 0 ? (
+            <ul className="grid gap-3 sm:grid-cols-2">
+              {barbershop.barbershopServices.map((service) => (
+                <li key={service.id}>
+                  <ServiceItem service={service} />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-zinc-400">
+              Esta barbearia ainda não cadastrou serviços.
+            </p>
+          )}
+        </section>
+      </div>
     </main>
   );
 };
