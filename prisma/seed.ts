@@ -14,10 +14,7 @@ const prisma = new PrismaClient({
 
 async function seedDatabase() {
   try {
-    const images = [
-      "/imageFrente.jpeg",
-      "https://utfs.io/f/45331760-899c-4b4b-910e-e00babb6ed81-16q.png",
-    ]
+    const images = ["/imageFrente.jpeg"]
 
     const creativeNames = ["shinider"]
 
@@ -25,60 +22,114 @@ async function seedDatabase() {
 
     const services = [
       {
-        name: "Corte de Cabelo",
-        description: "Estilo personalizado com as últimas tendências.",
-        price: 60.0,
-        duration: 45,
-        imageUrl:
-          "https://utfs.io/f/0ddfbd26-a424-43a0-aaf3-c3f1dc6be6d1-1kgxo7.png",
+        name: "Cabelo",
+        description: "Corte, estilo e acabamento premium.",
+        price: 40,
+        duration: 25,
+        imageUrl: "/service-cabelo.png",
       },
       {
         name: "Barba",
-        description: "Modelagem completa para destacar sua masculinidade.",
-        price: 40.0,
-        duration: 30,
-        imageUrl:
-          "https://utfs.io/f/e6bdffb6-24a9-455b-aba3-903c2c2b5bde-1jo6tu.png",
+        description: "Modelagem completa para um visual alinhado.",
+        price: 40,
+        duration: 25,
+        imageUrl: "/logo2.png",
       },
       {
-        name: "Pézinho",
-        description: "Acabamento perfeito para um visual renovado.",
-        price: 35.0,
-        duration: 20,
-        imageUrl:
-          "https://utfs.io/f/8a457cda-f768-411d-a737-cdb23ca6b9b5-b3pegf.png",
+        name: "Cabelo & Barba",
+        description: "Experiência completa. Cabelo e barba alinhados.",
+        price: 80,
+        duration: 25,
+        imageUrl: "/logo2.png",
       },
       {
-        name: "Sobrancelha",
-        description: "Expressão acentuada com modelagem precisa.",
-        price: 20.0,
-        duration: 15,
-        imageUrl:
-          "https://utfs.io/f/2118f76e-89e4-43e6-87c9-8f157500c333-b0ps0b.png",
+        name: "Acabamento",
+        description: "Detalhes que fazem toda a diferença.",
+        price: 25,
+        duration: 25,
+        imageUrl: "/logo2.png",
       },
       {
-        name: "Massagem",
-        description: "Relaxe com uma massagem revigorante.",
-        price: 50.0,
-        duration: 40,
-        imageUrl:
-          "https://utfs.io/f/c4919193-a675-4c47-9f21-ebd86d1c8e6a-4oen2a.png",
+        name: "Bigode ou Sobrancelha",
+        description: "Design e simetria para realçar seu estilo.",
+        price: 15,
+        duration: 25,
+        imageUrl: "/logo2.png",
       },
       {
         name: "Hidratação",
-        description: "Hidratação profunda para cabelo e barba.",
-        price: 25.0,
+        description: "Reposição de nutrientes, fios mais saudáveis.",
+        price: 35,
         duration: 25,
-        imageUrl:
-          "https://utfs.io/f/8a457cda-f768-411d-a737-cdb23ca6b9b5-b3pegf.png",
+        imageUrl: "/logo2.png",
       },
       {
-        name: "shinider",
-        description: "excelencia em beleza masculina.",
-        price: 25.0,
+        name: "Pigmentação",
+        description: "Cobertura de fios brancos com efeito natural.",
+        price: 50,
         duration: 25,
-        imageUrl:
-          "https://utfs.io/f/8a457cda-f768-411d-a737-cdb23ca6b9b5-b3pegf.png",
+        imageUrl: "/logo2.png",
+      },
+      {
+        name: "Progressiva",
+        description:
+          "Alinhamento capilar masculino. Reduz o volume, controla o frizz e alinha os fios, respeitando a estrutura do seu cabelo.",
+        price: 180,
+        duration: 25,
+        imageUrl: "/logo2.png",
+      },
+      {
+        name: "Luzes & Corte",
+        description: "Iluminação estratégica para realçar seu estilo.",
+        price: 150,
+        duration: 25,
+        imageUrl: "/logo2.png",
+      },
+      {
+        name: "Platinado e corte",
+        description:
+          "Descoloração completa com técnica profissional e acabamento impecável.",
+        price: 200,
+        duration: 25,
+        imageUrl: "/logo2.png",
+      },
+      {
+        name: "Barba Project",
+        description:
+          "Tratamento para corrigir falhas e estimular o crescimento dos fios. Mais preenchimento, volume e definição para sua barba.",
+        price: 250,
+        duration: 25,
+        imageUrl: "/logo2.png",
+      },
+      {
+        name: "Prótese Capilar",
+        description:
+          "Solução personalizada para recuperação capilar. Naturalidade, conforto e autoestima renovada.",
+        price: 2500,
+        duration: 25,
+        imageUrl: "/logo2.png",
+      },
+      {
+        name: "Skincare",
+        description: "Limpeza de pele profunda e renovação.",
+        price: 35,
+        duration: 25,
+        imageUrl: "/logo2.png",
+      },
+      {
+        name: "Depilação a cera",
+        description: "Mais conforto e higiene para o dia a dia.",
+        price: 25,
+        duration: 25,
+        imageUrl: "/logo2.png",
+      },
+      {
+        name: "Alisamento",
+        description:
+          "Deixa os fios mais lisos, controlando o volume e eliminando o frizz, proporcionando um aspecto mais alinhado, brilhoso e saudável. Ideal para quem busca praticidade no dia a dia e um visual mais disciplinado, sem perder o movimento natural.",
+        price: 100,
+        duration: 25,
+        imageUrl: "/logo2.png",
       },
     ]
 
@@ -93,35 +144,32 @@ async function seedDatabase() {
       )
 
       if (existingBarbershop) {
-        if (name === "shinider") {
-          await prisma.barbershop.update({
-            where: { id: existingBarbershop.id },
-            data: { imageUrl: images[i] },
-          })
-        }
-
         const existingServices = await prisma.barbershopService.findMany({
           where: { barbershopId: existingBarbershop.id },
-          select: { name: true },
+          select: { id: true, name: true },
         })
-        const existingServiceNames = new Set(
-          existingServices.map((service) => service.name),
-        )
-        const missingServices = services.filter(
-          (service) => !existingServiceNames.has(service.name),
-        )
 
-        if (missingServices.length > 0) {
-          await prisma.barbershopService.createMany({
-            data: missingServices.map((service) => ({
-              ...service,
-              barbershopId: existingBarbershop.id,
-            })),
-          })
-          console.log(`Serviços ausentes adicionados: ${name}`)
-        } else {
-          console.log(`Barbearia já possui os serviços: ${name}`)
+        for (const service of services) {
+          const existingService = existingServices.find(
+            (item) => item.name.toLowerCase() === service.name.toLowerCase(),
+          )
+
+          if (existingService) {
+            await prisma.barbershopService.update({
+              where: { id: existingService.id },
+              data: service,
+            })
+          } else {
+            await prisma.barbershopService.create({
+              data: {
+                ...service,
+                barbershopId: existingBarbershop.id,
+              },
+            })
+          }
         }
+
+        console.log(`Serviços atualizados: ${name}`)
         return
       }
 

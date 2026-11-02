@@ -1,58 +1,106 @@
-"use client";
+"use client"
 
-import Image from "next/image";
-import { useState } from "react";
-import type { barbershopService } from "@/generated/prisma/client";
+import Image from "next/image"
+import { useState } from "react"
+import type { barbershopService } from "@/generated/prisma/client"
 
 interface ServiceItemProps {
-  service: barbershopService;
+  service: barbershopService
 }
 
 const ServiceItem = ({ service }: ServiceItemProps) => {
-  const [selected, setSelected] = useState(false);
-  const isHaircut = service.name.toLowerCase() === "corte de cabelo";
+  const [selected, setSelected] = useState(false)
+  const isHaircut = service.name.toLowerCase() === "cabelo"
+  const weekdayPrice =
+    service.name === "Cabelo"
+      ? 40
+      : service.name === "Barba"
+        ? 40
+        : service.name === "Cabelo & Barba"
+          ? 80
+          : null
+  const saturdayPrice =
+    service.name === "Cabelo"
+      ? 45
+      : service.name === "Barba"
+        ? 45
+        : service.name === "Cabelo & Barba"
+          ? 90
+          : null
 
   return (
     <button
       type="button"
       aria-pressed={selected}
       onClick={() => setSelected((isSelected) => !isSelected)}
-      className={`h-full w-full space-y-2 rounded-xl border p-4 text-left transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257] ${
+      className={`flex w-full items-center justify-between gap-4 rounded-lg border-2 p-3 text-left transition-all duration-200 ease-out active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257] ${
         selected
-          ? "scale-[1.02] border-[#f7e257] bg-[#f7e257]/15 shadow-lg shadow-[#f7e257]/10"
-          : "border-[#f7e257] bg-[#121212] hover:bg-[#f7e257]/5"
+          ? "scale-[1.01] border-[#f7e257] bg-[#f7e257]/15 shadow-lg shadow-[#f7e257]/20 ring-1 ring-[#f7e257]/40"
+          : "border-[#f7e257] bg-[#1f1f1f] hover:bg-[#292929]"
       }`}
     >
-      <span className="flex items-center gap-3">
+      <span className="flex min-w-0 items-center gap-3">
         {isHaircut && (
           <Image
             src="/service-cabelo.png"
-            alt="Corte de cabelo"
-            width={56}
-            height={59}
-            className="shrink-0 rounded-lg object-cover brightness-125 contrast-110 saturate-125"
+            alt=""
+            aria-hidden="true"
+            width={48}
+            height={50}
+            className="contrast-110 saturate-125 shrink-0 rounded-lg object-cover brightness-125"
           />
         )}
-        <span className="min-w-0">
-          <span className="block font-semibold text-white">{service.name}</span>
-          <span className="mt-1 block text-sm text-zinc-400">
+        <span className="min-w-0 space-y-1">
+          <span className="block font-bold leading-tight text-white">
+            {service.name}
+          </span>
+          <span className="block text-xs leading-snug text-zinc-300">
             {service.description}
           </span>
         </span>
       </span>
-      <span className="flex items-center justify-between gap-3 pt-1">
-        <span className="font-semibold text-[#f7e257]">
-          {Number(service.price).toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          })}
-        </span>
+      <span className="shrink-0 text-right">
+        {weekdayPrice !== null && saturdayPrice !== null ? (
+          <span className="flex gap-3">
+            <span>
+              <span className="block text-[9px] font-semibold uppercase text-zinc-300">
+                Seg a qui
+              </span>
+              <span className="text-sm font-bold text-white">
+                {weekdayPrice.toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </span>
+            </span>
+            <span>
+              <span className="block text-[9px] font-semibold uppercase text-zinc-300">
+                Qui a sáb
+              </span>
+              <span className="text-sm font-bold text-white">
+                {saturdayPrice.toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </span>
+            </span>
+          </span>
+        ) : (
+          <span className="text-base font-bold text-white">
+            {Number(service.price).toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            })}
+          </span>
+        )}
         {service.duration != null && (
-          <span className="text-sm text-zinc-500">{service.duration} min</span>
+          <span className="mt-1 block text-xs text-zinc-400">
+            {service.duration} min
+          </span>
         )}
       </span>
     </button>
-  );
-};
+  )
+}
 
-export default ServiceItem;
+export default ServiceItem

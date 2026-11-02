@@ -1,14 +1,32 @@
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import { notFound } from "next/navigation";
-import { db } from "@/_lib/prisma";
-import ServiceItem from "../service-item";
+import Link from "next/link"
+import { ArrowLeft } from "lucide-react"
+import { notFound } from "next/navigation"
+import { db } from "@/_lib/prisma"
+import ServiceItem from "../service-item"
+
+const serviceOrder = [
+  "Cabelo",
+  "Barba",
+  "Cabelo & Barba",
+  "Acabamento",
+  "Bigode ou Sobrancelha",
+  "Hidratação",
+  "Pigmentação",
+  "Progressiva",
+  "Luzes & Corte",
+  "Platinado e corte",
+  "Barba Project",
+  "Prótese Capilar",
+  "Skincare",
+  "Depilação a cera",
+  "Alisamento",
+]
 
 type BarbershopPageProps = {
   params: {
-    id: string;
-  };
-};
+    id: string
+  }
+}
 
 const BarbershopPage = async ({ params }: BarbershopPageProps) => {
   const barbershop = await db.barbershop.findUnique({
@@ -17,17 +35,15 @@ const BarbershopPage = async ({ params }: BarbershopPageProps) => {
       barbershopServices: {
         where: {
           name: {
-            not: "shinider",
-            mode: "insensitive",
+            in: serviceOrder,
           },
         },
-        orderBy: { name: "asc" },
       },
     },
-  });
+  })
 
   if (!barbershop) {
-    notFound();
+    notFound()
   }
 
   return (
@@ -44,12 +60,17 @@ const BarbershopPage = async ({ params }: BarbershopPageProps) => {
       <div className="flex w-full flex-col items-start gap-6">
         <section className="w-full flex-1 space-y-4">
           {barbershop.barbershopServices.length > 0 ? (
-            <ul className="grid gap-3 sm:grid-cols-2">
-              {barbershop.barbershopServices.map((service) => (
-                <li key={service.id}>
-                  <ServiceItem service={service} />
-                </li>
-              ))}
+            <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {[...barbershop.barbershopServices]
+                .sort(
+                  (a, b) =>
+                    serviceOrder.indexOf(a.name) - serviceOrder.indexOf(b.name),
+                )
+                .map((service) => (
+                  <li key={service.id}>
+                    <ServiceItem service={service} />
+                  </li>
+                ))}
             </ul>
           ) : (
             <p className="text-sm text-zinc-400">
@@ -59,7 +80,7 @@ const BarbershopPage = async ({ params }: BarbershopPageProps) => {
         </section>
       </div>
     </main>
-  );
-};
+  )
+}
 
-export default BarbershopPage;
+export default BarbershopPage
