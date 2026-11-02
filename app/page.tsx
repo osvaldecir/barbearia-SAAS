@@ -2,7 +2,10 @@ import {
   CalendarDays,
   Clock3,
   MapPin,
+  MessageCircle,
   SearchIcon,
+  Smartphone,
+  UserRound,
 } from "lucide-react"
 import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
@@ -42,10 +45,17 @@ export default async function Home() {
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-[radial-gradient(ellipse_at_top,_rgba(247,226,87,0.09),_transparent_65%)]" />
       <div className="relative mx-auto max-w-6xl">
         <section className="mb-8 flex flex-col gap-6 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
-          <div>
+          <div className="flex items-center gap-3">
             <h1 className="max-w-2xl font-[family-name:var(--font-geist-sans)] text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
               Olá, <i>ClienteTester</i>
             </h1>
+            <div
+              role="img"
+              aria-label="Foto do cliente"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#f7e257]/40 bg-[#1a1a1a] text-[#f7e257] sm:h-12 sm:w-12"
+            >
+              <UserRound aria-hidden="true" className="h-6 w-6" />
+            </div>
           </div>
 
           <form
@@ -247,6 +257,31 @@ export default async function Home() {
                   className="mt-0.5 h-4 w-4 shrink-0 text-[#f7e257]"
                 />
                 <span>Rua Pernambuco, 123</span>
+              </div>
+              <div className="flex items-center gap-2 border-t border-white/10 px-5 py-4 text-sm text-zinc-400">
+                <Smartphone
+                  aria-hidden="true"
+                  className="h-4 w-4 shrink-0 text-[#f7e257]"
+                />
+                <a
+                  href="tel:+5517988126114"
+                  className="transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
+                >
+                  17 98812-6114
+                </a>
+                <a
+                  href="https://wa.me/5517988126114"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Conversar pelo WhatsApp"
+                  className="ml-10 inline-flex items-center gap-2 rounded-full text-zinc-400 transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
+                >
+                  <MessageCircle
+                    aria-hidden="true"
+                    className="h-5 w-5 text-[#f7e257]"
+                  />
+                  <span>Chamar no zap</span>
+                </a>
               </div>
             </article>
           </section>
