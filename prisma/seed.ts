@@ -39,7 +39,7 @@ async function seedDatabase() {
         name: "Cabelo & Barba",
         description: "Experiência completa. Cabelo e barba alinhados.",
         price: 80,
-        duration: 25,
+        duration: 60,
         imageUrl: "/logo2.png",
       },
       {

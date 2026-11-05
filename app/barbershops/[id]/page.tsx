@@ -26,19 +26,22 @@ type BarbershopPageProps = {
   params: {
     id: string
   }
+  searchParams?: {
+    serviceId?: string | string[]
+  }
 }
 
-const BarbershopPage = async ({ params }: BarbershopPageProps) => {
+const BarbershopPage = async ({
+  params,
+  searchParams,
+}: BarbershopPageProps) => {
+  const selectedServiceId = Array.isArray(searchParams?.serviceId)
+    ? searchParams.serviceId[0]
+    : searchParams?.serviceId
   const barbershop = await db.barbershop.findUnique({
     where: { id: params.id },
     include: {
-      barbershopServices: {
-        where: {
-          name: {
-            in: serviceOrder,
-          },
-        },
-      },
+      barbershopServices: true,
     },
   })
 
@@ -62,13 +65,21 @@ const BarbershopPage = async ({ params }: BarbershopPageProps) => {
           {barbershop.barbershopServices.length > 0 ? (
             <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {[...barbershop.barbershopServices]
-                .sort(
-                  (a, b) =>
-                    serviceOrder.indexOf(a.name) - serviceOrder.indexOf(b.name),
-                )
+                .sort((a, b) => {
+                  const aOrder = serviceOrder.indexOf(a.name)
+                  const bOrder = serviceOrder.indexOf(b.name)
+                  return (
+                    (aOrder === -1 ? serviceOrder.length : aOrder) -
+                    (bOrder === -1 ? serviceOrder.length : bOrder)
+                  )
+                })
                 .map((service) => (
                   <li key={service.id}>
-                    <ServiceItem service={service} phone={barbershop.phones} />
+                    <ServiceItem
+                      service={service}
+                      phone={barbershop.phones}
+                      initiallySelected={service.id === selectedServiceId}
+                    />
                   </li>
                 ))}
             </ul>

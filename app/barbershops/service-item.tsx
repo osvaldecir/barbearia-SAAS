@@ -7,10 +7,15 @@ import type { barbershopService } from "@/generated/prisma/client"
 interface ServiceItemProps {
   service: barbershopService
   phone: string
+  initiallySelected?: boolean
 }
 
-const ServiceItem = ({ service, phone }: ServiceItemProps) => {
-  const [selected, setSelected] = useState(false)
+const ServiceItem = ({
+  service,
+  phone,
+  initiallySelected = false,
+}: ServiceItemProps) => {
+  const [selected, setSelected] = useState(initiallySelected)
   const isHaircut = service.name.toLowerCase() === "cabelo"
   const phoneDigits = phone.replace(/\D/g, "")
   const whatsappPhone = phoneDigits.startsWith("55")

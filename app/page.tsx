@@ -8,6 +8,7 @@ import {
   UserRound,
 } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import BarbershopItem from "@/_components/barbershop-item"
 import { db } from "@/_lib/prisma"
@@ -30,6 +31,9 @@ export default async function Home() {
     },
     orderBy: { name: "asc" },
   })
+  const appointmentsHref = barberShops[0]
+    ? `/barbershops/${barberShops[0].id}`
+    : "#barbershops-heading"
 
   const galleryPhotos = [
     "/fotopb01.jpg",
@@ -129,8 +133,8 @@ export default async function Home() {
                 aria-label="Serviços disponíveis"
                 className="mt-4 flex flex-wrap gap-2 pb-1"
               >
-                <button
-                  type="button"
+                <Link
+                  href={appointmentsHref}
                   className="inline-flex shrink-0 cursor-pointer items-center gap-2 rounded-lg border border-[#f7e257]/30 bg-[#f7e257]/10 px-3 py-2 text-sm font-medium text-[#f7e257] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
                 >
                   <span
@@ -143,9 +147,9 @@ export default async function Home() {
                     }}
                   />
                   Cabelo
-                </button>
-                <button
-                  type="button"
+                </Link>
+                <Link
+                  href={appointmentsHref}
                   className="inline-flex shrink-0 cursor-pointer items-center gap-2 rounded-lg border border-[#f7e257]/30 bg-[#f7e257]/10 px-3 py-2 text-sm font-medium text-[#f7e257] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
                 >
                   <span
@@ -158,9 +162,9 @@ export default async function Home() {
                     }}
                   />
                   Barba
-                </button>
-                <button
-                  type="button"
+                </Link>
+                <Link
+                  href={appointmentsHref}
                   className="inline-flex shrink-0 cursor-pointer items-center gap-2 rounded-lg border border-[#f7e257]/30 bg-[#f7e257]/10 px-3 py-2 text-sm font-medium text-[#f7e257] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
                 >
                   <span
@@ -173,9 +177,9 @@ export default async function Home() {
                     }}
                   />
                   Acabamento
-                </button>
-                <button
-                  type="button"
+                </Link>
+                <Link
+                  href={appointmentsHref}
                   className="inline-flex shrink-0 cursor-pointer items-center gap-2 rounded-lg border border-[#f7e257]/30 bg-[#f7e257]/10 px-3 py-2 text-sm font-medium text-[#f7e257] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
                 >
                   <span
@@ -188,9 +192,9 @@ export default async function Home() {
                     }}
                   />
                   Hidratação
-                </button>
-                <button
-                  type="button"
+                </Link>
+                <Link
+                  href={appointmentsHref}
                   className="inline-flex shrink-0 cursor-pointer items-center gap-2 rounded-lg border border-[#f7e257]/30 bg-[#f7e257]/10 px-3 py-2 text-sm font-medium text-[#f7e257] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
                 >
                   <span
@@ -203,7 +207,7 @@ export default async function Home() {
                     }}
                   />
                   Todos os serviços
-                </button>
+                </Link>
               </div>
             </div>
 
@@ -280,7 +284,7 @@ export default async function Home() {
                     aria-hidden="true"
                     className="h-5 w-5 text-[#f7e257]"
                   />
-                  <span>Chamar no zap</span>
+                  <span>Chamar no WhatsApp</span>
                 </a>
               </div>
             </article>
