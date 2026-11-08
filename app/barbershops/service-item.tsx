@@ -16,7 +16,6 @@ const ServiceItem = ({
   initiallySelected = false,
 }: ServiceItemProps) => {
   const [selected, setSelected] = useState(initiallySelected)
-  const isHaircut = service.name.toLowerCase() === "cabelo"
   const phoneDigits = phone.replace(/\D/g, "")
   const whatsappPhone = phoneDigits.startsWith("55")
     ? phoneDigits
@@ -65,16 +64,14 @@ const ServiceItem = ({
         className="flex w-full items-center justify-between gap-4 rounded text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
       >
         <span className="flex min-w-0 items-center gap-3">
-          {isHaircut && (
-            <Image
-              src="/service-cabelo.png"
-              alt=""
-              aria-hidden="true"
-              width={80}
-              height={80}
-              className="contrast-110 saturate-125 shrink-0 rounded-xl object-cover shadow-lg shadow-black/40 ring-2 ring-[#f7e257]/50 brightness-125"
-            />
-          )}
+          <Image
+            src={service.imageUrl}
+            alt=""
+            aria-hidden="true"
+            width={64}
+            height={64}
+            className="h-16 w-16 shrink-0 rounded-xl object-cover shadow-lg shadow-black/40 ring-1 ring-[#f7e257]/30"
+          />
           <span className="min-w-0 space-y-1">
             <span className="block font-bold leading-tight text-white">
               {service.name}

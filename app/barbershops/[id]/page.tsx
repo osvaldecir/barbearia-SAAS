@@ -49,6 +49,10 @@ const BarbershopPage = async ({
     notFound()
   }
 
+  const visibleServices = barbershop.barbershopServices.filter(
+    (service) => service.name.trim().toLowerCase() !== "shinider",
+  )
+
   return (
     <main className="flex min-h-screen w-full flex-col items-start gap-4 px-5 py-12">
       <div className="w-full max-w-[351px]">
@@ -62,9 +66,9 @@ const BarbershopPage = async ({
       </div>
       <div className="flex w-full flex-col items-start gap-6">
         <section className="w-full flex-1 space-y-4">
-          {barbershop.barbershopServices.length > 0 ? (
+          {visibleServices.length > 0 ? (
             <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {[...barbershop.barbershopServices]
+              {[...visibleServices]
                 .sort((a, b) => {
                   const aOrder = serviceOrder.indexOf(a.name)
                   const bOrder = serviceOrder.indexOf(b.name)
