@@ -40,6 +40,14 @@ const ServiceItem = ({
         : service.name === "Cabelo & Barba"
           ? 90
           : null
+  const durationLabel =
+    service.duration != null
+      ? service.duration < 60
+        ? `${service.duration} min`
+        : service.duration % 60 === 0
+          ? `${service.duration / 60}h`
+          : `${Math.floor(service.duration / 60)}h ${service.duration % 60} min`
+      : null
 
   return (
     <article
@@ -110,9 +118,9 @@ const ServiceItem = ({
               })}
             </span>
           )}
-          {service.duration != null && (
+          {durationLabel && (
             <span className="mt-1 block text-xs text-zinc-400">
-              {service.duration} min
+              {durationLabel}
             </span>
           )}
         </span>

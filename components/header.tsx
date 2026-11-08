@@ -29,7 +29,7 @@ const Header = async () => {
     ) ?? []
 
   return (
-    <header className="relative z-10 border-b border-white/10 bg-[#080808]/90 backdrop-blur-xl">
+    <header className="relative z-30 border-b border-white/10 bg-[#080808]/90 backdrop-blur-xl">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex items-center">
           <Image

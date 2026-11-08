@@ -82,20 +82,30 @@ export default async function Home() {
 
         <div className="mb-8 grid gap-4 md:grid-cols-3">
           {[
-            { title: "Atendimento premium", text: "Cortes e cuidados com acabamento impecável." },
-            { title: "Ambiente moderno", text: "Estilo, conforto e uma experiência de marca." },
-            { title: "Agendamento rápido", text: "Reserve seu horário em poucos segundos." },
+            {
+              title: "Atendimento premium",
+              text: "Cortes e cuidados com acabamento impecável.",
+            },
+            {
+              title: "Ambiente moderno",
+              text: "Estilo, conforto e uma experiência de marca.",
+            },
+            {
+              title: "Agendamento rápido",
+              text: "Reserve seu horário em poucos segundos.",
+            },
           ].map((feature) => (
             <div
               key={feature.title}
               className="rounded-2xl border border-white/10 bg-[#121212]/80 p-4 shadow-lg shadow-black/20"
             >
-              <p className="text-sm font-semibold text-[#f7e257]">{feature.title}</p>
-              <p className="mt-2 text-sm leading-6 text-zinc-400">{feature.text}</p>
+              <p className="text-sm font-semibold text-[#f7e257]">
+                {feature.title}
+              </p>
+              <p className="mt-2 text-sm leading-6 text-zinc-400">
+                {feature.text}
+              </p>
             </div>
-
-            
-
           ))}
         </div>
 
@@ -207,10 +217,10 @@ export default async function Home() {
               <div className="flex items-center gap-4 p-5">
                 <div className="flex h-[72px] w-[72px] shrink-0 flex-col items-center justify-center rounded-xl border border-[#f7e257]/20 bg-[#f7e257]/10">
                   <span className="text-[11px] font-semibold uppercase tracking-wider text-[#f7e257]">
-                    Out
+                    Dezembro
                   </span>
                   <span className="text-2xl font-bold leading-tight text-white">
-                    18
+                    08
                   </span>
                   <span className="text-[10px] text-zinc-400">2026</span>
                 </div>
@@ -225,7 +235,7 @@ export default async function Home() {
                         aria-hidden="true"
                         className="h-4 w-4 text-[#f7e257]"
                       />
-                      18 de outubro
+                      01/10/2026
                     </span>
                     <span className="inline-flex items-center gap-1.5">
                       <Clock3
@@ -292,10 +302,7 @@ export default async function Home() {
             {barberShops.length > 0 ? (
               <div className="grid gap-4">
                 {barberShops.map((barbershop) => (
-                  <BarbershopItem
-                    key={barbershop.id}
-                    barbershop={barbershop}
-                  />
+                  <BarbershopItem key={barbershop.id} barbershop={barbershop} />
                 ))}
               </div>
             ) : (

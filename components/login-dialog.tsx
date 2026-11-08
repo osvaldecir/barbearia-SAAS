@@ -1,20 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
 import { signIn, signOut, useSession } from "next-auth/react"
 import { LogOut } from "lucide-react"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
 
 const LoginDialog = () => {
   const { data: session } = useSession()
-  const [open, setOpen] = useState(false)
   const [isSigningIn, setIsSigningIn] = useState(false)
   const [signInError, setSignInError] = useState("")
 
@@ -23,7 +14,7 @@ const LoginDialog = () => {
     setSignInError("")
 
     try {
-      await signIn("google", { callbackUrl: "/" }, { prompt: "select_account" })
+      await signIn("google", { callbackUrl: "/" })
     } catch {
       setSignInError("Não foi possível iniciar o login com Google. Tente novamente.")
       setIsSigningIn(false)
@@ -31,11 +22,13 @@ const LoginDialog = () => {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
-        className="inline-flex h-10 items-center gap-2 rounded-full border border-[#f7e257] bg-[#1f1f1f] px-3 text-sm font-medium text-[#f7e257] shadow-md shadow-black/30 transition hover:bg-[#f7e257]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
+        onClick={handleGoogleSignIn}
+        disabled={isSigningIn}
+        aria-busy={isSigningIn}
+        className="inline-flex h-10 items-center gap-2 rounded-full border border-[#f7e257] bg-[#1f1f1f] px-3 text-sm font-medium text-[#f7e257] shadow-md shadow-black/30 transition hover:bg-[#f7e257]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257] disabled:cursor-wait disabled:opacity-60"
       >
         <svg
           aria-hidden="true"
@@ -50,7 +43,7 @@ const LoginDialog = () => {
           />
           <path fill="#FBBC04" d="M3 6.8 7 10v9H4a1 1 0 0 1-1-1V6.8Z" />
         </svg>
-        Fazer login
+        {isSigningIn ? "Conectando..." : "Fazer login"}
       </button>
       {session?.user && (
         <button
@@ -63,37 +56,15 @@ const LoginDialog = () => {
           <LogOut aria-hidden="true" className="h-4 w-4" />
         </button>
       )}
-      <DialogContent className="border border-[#f7e257]/30 bg-[#121212] text-white shadow-2xl shadow-black/50 ring-0">
-        <DialogHeader className="pr-8">
-          <DialogTitle className="text-lg font-semibold text-[#f7e257]">
-            Fazer login
-          </DialogTitle>
-          <DialogDescription className="leading-relaxed text-zinc-400">
-            Conecte-se com sua conta Google.
-          </DialogDescription>
-        </DialogHeader>
-        <button
-          type="button"
-          onClick={handleGoogleSignIn}
-          disabled={isSigningIn}
-          aria-busy={isSigningIn}
-          className="mx-auto flex w-full max-w-[278px] items-center justify-center rounded-xl border border-[#f7e257]/20 bg-[#080808] p-3 transition hover:border-[#f7e257]/50 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257] disabled:cursor-wait disabled:opacity-60"
+      {signInError && (
+        <p
+          role="alert"
+          className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-lg border border-red-500/30 bg-[#121212] px-4 py-3 text-sm text-red-400 shadow-xl"
         >
-          <Image
-            src="/login.png"
-            alt="Google"
-            width={278}
-            height={37}
-            className="h-auto w-full"
-          />
-        </button>
-        {signInError && (
-          <p role="alert" className="text-center text-sm text-red-400">
-            {signInError}
-          </p>
-        )}
-      </DialogContent>
-    </Dialog>
+          {signInError}
+        </p>
+      )}
+    </>
   )
 }
 

@@ -25,14 +25,14 @@ async function seedDatabase() {
         name: "Cabelo",
         description: "Corte, estilo e acabamento premium.",
         price: 40,
-        duration: 25,
+        duration: 40,
         imageUrl: "/service-cabelo.png",
       },
       {
         name: "Barba",
         description: "Modelagem completa para um visual alinhado.",
         price: 40,
-        duration: 25,
+        duration: 30,
         imageUrl: "/logo2.png",
       },
       {
@@ -53,7 +53,7 @@ async function seedDatabase() {
         name: "Bigode ou Sobrancelha",
         description: "Design e simetria para realçar seu estilo.",
         price: 15,
-        duration: 25,
+        duration: 15,
         imageUrl: "/logo2.png",
       },
       {
@@ -82,7 +82,7 @@ async function seedDatabase() {
         name: "Luzes & Corte",
         description: "Iluminação estratégica para realçar seu estilo.",
         price: 150,
-        duration: 25,
+        duration: 120,
         imageUrl: "/logo2.png",
       },
       {
@@ -90,7 +90,7 @@ async function seedDatabase() {
         description:
           "Descoloração completa com técnica profissional e acabamento impecável.",
         price: 200,
-        duration: 25,
+        duration: 180,
         imageUrl: "/logo2.png",
       },
       {
@@ -98,7 +98,7 @@ async function seedDatabase() {
         description:
           "Tratamento para corrigir falhas e estimular o crescimento dos fios. Mais preenchimento, volume e definição para sua barba.",
         price: 250,
-        duration: 25,
+        duration: 30,
         imageUrl: "/logo2.png",
       },
       {
@@ -106,7 +106,7 @@ async function seedDatabase() {
         description:
           "Solução personalizada para recuperação capilar. Naturalidade, conforto e autoestima renovada.",
         price: 2500,
-        duration: 25,
+        duration: 120,
         imageUrl: "/logo2.png",
       },
       {
@@ -128,7 +128,7 @@ async function seedDatabase() {
         description:
           "Deixa os fios mais lisos, controlando o volume e eliminando o frizz, proporcionando um aspecto mais alinhado, brilhoso e saudável. Ideal para quem busca praticidade no dia a dia e um visual mais disciplinado, sem perder o movimento natural.",
         price: 100,
-        duration: 25,
+        duration: 60,
         imageUrl: "/logo2.png",
       },
     ]
