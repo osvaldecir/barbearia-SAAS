@@ -3,12 +3,12 @@ import {
   Clock3,
   MapPin,
   MessageCircle,
-  SearchIcon,
   Smartphone,
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
+import ServiceSearch from "@/components/service-search"
 import UserGreeting from "@/components/user-greeting"
 import BarbershopItem from "@/_components/barbershop-item"
 import { db } from "@/_lib/prisma"
@@ -28,9 +28,23 @@ export default async function Home() {
       name: true,
       description: true,
       imageUrl: true,
+      barbershopServices: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
     },
     orderBy: { name: "asc" },
   })
+  const searchableServices = barberShops.flatMap((barbershop) =>
+    barbershop.barbershopServices
+      .filter((service) => service.name.trim().toLowerCase() !== "shinider")
+      .map((service) => ({
+        ...service,
+        barbershopId: barbershop.id,
+      })),
+  )
   const appointmentsHref = barberShops[0]
     ? `/barbershops/${barberShops[0].id}`
     : "#barbershops-heading"
@@ -51,27 +65,7 @@ export default async function Home() {
         <section className="mb-8 flex flex-col gap-6 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
           <UserGreeting />
 
-          <form
-            role="search"
-            className="flex w-full items-center gap-2 rounded-xl border border-white/10 bg-[#121212] p-2 shadow-lg shadow-black/20 transition focus-within:border-[#f7e257]/50 sm:max-w-sm"
-          >
-            <SearchIcon
-              aria-hidden="true"
-              className="ml-2 h-4 w-4 shrink-0 text-zinc-500"
-            />
-            <input
-              type="search"
-              aria-label="Buscar serviços"
-              placeholder="Buscar serviços..."
-              className="h-10 min-w-0 flex-1 bg-transparent px-1 text-sm text-white outline-none placeholder:text-zinc-500"
-            />
-            <button
-              type="submit"
-              className="rounded-lg bg-[#f7e257] px-4 py-2.5 text-sm font-semibold text-black transition hover:bg-[#ffec70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257] focus-visible:ring-offset-2 focus-visible:ring-offset-[#121212]"
-            >
-              Buscar
-            </button>
-          </form>
+          <ServiceSearch services={searchableServices} />
         </section>
 
         <div className="relative mb-8 min-h-[220px] overflow-hidden rounded-3xl border border-white/10 bg-[#121212] shadow-2xl shadow-black/40 sm:mb-10 sm:min-h-[280px]">

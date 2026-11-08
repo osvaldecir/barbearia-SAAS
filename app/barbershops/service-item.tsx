@@ -43,6 +43,7 @@ const ServiceItem = ({
 
   return (
     <article
+      id={`service-${service.id}`}
       className={`rounded-lg border-2 p-3 transition-all duration-200 ease-out ${
         selected
           ? "scale-[1.01] border-[#f7e257] bg-[#f7e257]/15 shadow-lg shadow-[#f7e257]/20 ring-1 ring-[#f7e257]/40"

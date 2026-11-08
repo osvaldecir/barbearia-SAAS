@@ -2,7 +2,8 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import { signIn } from "next-auth/react"
+import { signIn, signOut, useSession } from "next-auth/react"
+import { LogOut } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -12,6 +13,7 @@ import {
 } from "@/components/ui/dialog"
 
 const LoginDialog = () => {
+  const { data: session } = useSession()
   const [open, setOpen] = useState(false)
   const [isSigningIn, setIsSigningIn] = useState(false)
   const [signInError, setSignInError] = useState("")
@@ -50,6 +52,17 @@ const LoginDialog = () => {
         </svg>
         Fazer login
       </button>
+      {session?.user && (
+        <button
+          type="button"
+          onClick={() => signOut({ callbackUrl: "/" })}
+          aria-label="Sair da conta"
+          title="Sair"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#f7e257] bg-[#1f1f1f] text-[#f7e257] shadow-md shadow-black/30 transition hover:bg-[#f7e257]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
+        >
+          <LogOut aria-hidden="true" className="h-4 w-4" />
+        </button>
+      )}
       <DialogContent className="border border-[#f7e257]/30 bg-[#121212] text-white shadow-2xl shadow-black/50 ring-0">
         <DialogHeader className="pr-8">
           <DialogTitle className="text-lg font-semibold text-[#f7e257]">
