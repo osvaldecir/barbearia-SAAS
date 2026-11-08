@@ -4,6 +4,7 @@ import "./globals.css"
 import { Inter } from "next/font/google"
 import { cn } from "@/app/lib/utils"
 import Header from "@/components/header"
+import AuthProvider from "@/app/_providers/auth"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
@@ -32,8 +33,10 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={cn("font-sans", inter.variable)}>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Header />
-        {children}
+        <AuthProvider>
+          <Header />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   )

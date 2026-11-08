@@ -2,8 +2,7 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import Link from "next/link"
-import { MessageCircle } from "lucide-react"
+import { signIn } from "next-auth/react"
 import {
   Dialog,
   DialogContent,
@@ -14,6 +13,20 @@ import {
 
 const LoginDialog = () => {
   const [open, setOpen] = useState(false)
+  const [isSigningIn, setIsSigningIn] = useState(false)
+  const [signInError, setSignInError] = useState("")
+
+  const handleGoogleSignIn = async () => {
+    setIsSigningIn(true)
+    setSignInError("")
+
+    try {
+      await signIn("google", { callbackUrl: "/" }, { prompt: "select_account" })
+    } catch {
+      setSignInError("Não foi possível iniciar o login com Google. Tente novamente.")
+      setIsSigningIn(false)
+    }
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -46,7 +59,13 @@ const LoginDialog = () => {
             Conecte-se com sua conta Google.
           </DialogDescription>
         </DialogHeader>
-        <div className="mx-auto flex w-full max-w-[278px] items-center justify-center rounded-xl border border-[#f7e257]/20 bg-[#080808] p-3">
+        <button
+          type="button"
+          onClick={handleGoogleSignIn}
+          disabled={isSigningIn}
+          aria-busy={isSigningIn}
+          className="mx-auto flex w-full max-w-[278px] items-center justify-center rounded-xl border border-[#f7e257]/20 bg-[#080808] p-3 transition hover:border-[#f7e257]/50 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257] disabled:cursor-wait disabled:opacity-60"
+        >
           <Image
             src="/login.png"
             alt="Google"
@@ -54,16 +73,12 @@ const LoginDialog = () => {
             height={37}
             className="h-auto w-full"
           />
-        </div>
-        <Link
-          href="https://wa.me/5517988126114"
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#f7e257]/30 bg-[#f7e257]/10 px-4 py-3 text-sm font-medium text-[#f7e257] transition hover:border-[#f7e257]/60 hover:bg-[#f7e257]/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
-        >
-          <MessageCircle aria-hidden="true" className="h-4 w-4" />
-          Chamar no zap
-        </Link>
+        </button>
+        {signInError && (
+          <p role="alert" className="text-center text-sm text-red-400">
+            {signInError}
+          </p>
+        )}
       </DialogContent>
     </Dialog>
   )

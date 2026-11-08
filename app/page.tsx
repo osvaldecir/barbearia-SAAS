@@ -5,11 +5,11 @@ import {
   MessageCircle,
   SearchIcon,
   Smartphone,
-  UserRound,
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
+import UserGreeting from "@/components/user-greeting"
 import BarbershopItem from "@/_components/barbershop-item"
 import { db } from "@/_lib/prisma"
 
@@ -49,18 +49,7 @@ export default async function Home() {
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-[radial-gradient(ellipse_at_top,_rgba(247,226,87,0.09),_transparent_65%)]" />
       <div className="relative mx-auto max-w-6xl">
         <section className="mb-8 flex flex-col gap-6 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
-          <div className="flex items-center gap-3">
-            <h1 className="max-w-2xl font-[family-name:var(--font-geist-sans)] text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
-              Olá, <i>ClienteTester</i>
-            </h1>
-            <div
-              role="img"
-              aria-label="Foto do cliente"
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#f7e257]/40 bg-[#1a1a1a] text-[#f7e257] sm:h-12 sm:w-12"
-            >
-              <UserRound aria-hidden="true" className="h-6 w-6" />
-            </div>
-          </div>
+          <UserGreeting />
 
           <form
             role="search"
