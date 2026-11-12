@@ -347,6 +347,7 @@ export default async function Home() {
               </div>
             ))}
           </div>
+          
 
           <footer className="mt-10 border-t border-white/10 pt-6 text-center">
             <p className="text-sm text-zinc-500">

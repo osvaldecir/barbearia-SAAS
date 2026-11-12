@@ -81,7 +81,6 @@ const BarbershopPage = async ({
                   <li key={service.id}>
                     <ServiceItem
                       service={service}
-                      phone={barbershop.phones}
                       initiallySelected={service.id === selectedServiceId}
                     />
                   </li>

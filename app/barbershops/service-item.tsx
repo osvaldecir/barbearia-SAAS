@@ -6,23 +6,14 @@ import type { barbershopService } from "@/generated/prisma/client"
 
 interface ServiceItemProps {
   service: barbershopService
-  phone: string
   initiallySelected?: boolean
 }
 
 const ServiceItem = ({
   service,
-  phone,
   initiallySelected = false,
 }: ServiceItemProps) => {
   const [selected, setSelected] = useState(initiallySelected)
-  const phoneDigits = phone.replace(/\D/g, "")
-  const whatsappPhone = phoneDigits.startsWith("55")
-    ? phoneDigits
-    : `55${phoneDigits}`
-  const reservationMessage = encodeURIComponent(
-    `Olá! Gostaria de reservar o serviço ${service.name}.`,
-  )
   const weekdayPrice =
     service.name === "Cabelo"
       ? 40
@@ -123,13 +114,13 @@ const ServiceItem = ({
         </span>
       </button>
       <a
-        href={`https://wa.me/${whatsappPhone}?text=${reservationMessage}`}
+        href={`/reservas/${service.barbershopId}/${service.id}`}
         target="_blank"
-        rel="noreferrer"
-        aria-label={`Reservar ${service.name} pelo WhatsApp`}
+        rel="noopener noreferrer"
+        aria-label={`Fazer reserva de ${service.name} em uma nova aba`}
         className="mt-3 inline-flex items-center justify-center rounded-lg bg-[#f7e257] px-5 py-2.5 text-sm font-bold text-black transition hover:bg-[#ffec70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1f1f1f]"
       >
-        Reservar
+        Fazer reserva
       </a>
     </article>
   )
