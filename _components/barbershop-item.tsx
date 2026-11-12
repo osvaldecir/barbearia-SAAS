@@ -12,7 +12,7 @@ type BarbershopItemProps = {
 
 const BarbershopItem = ({ barbershop }: BarbershopItemProps) => {
   return (
-    <article className="group overflow-hidden rounded-2xl border border-white/10 bg-[#121212] shadow-lg shadow-black/20 transition duration-300 hover:-translate-y-1 hover:border-[#f7e257]/35 hover:shadow-xl hover:shadow-black/30">
+    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#121212] shadow-lg shadow-black/20 transition duration-300 hover:-translate-y-1 hover:border-[#f7e257]/35 hover:shadow-xl hover:shadow-black/30">
       <div className="relative h-44 w-full overflow-hidden bg-[#1a1a1a]">
         <Image
           src={barbershop.imageUrl || "/logo2.png"}
@@ -28,24 +28,24 @@ const BarbershopItem = ({ barbershop }: BarbershopItemProps) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent" />
       </div>
 
-      <div className="space-y-3 p-4">
-        <div className="min-w-0">
+      <div className="flex flex-1 flex-col p-4">
+        {barbershop.name.toLowerCase() !== "shinider" && (
+          <p className="line-clamp-3 min-h-[3.5rem] text-sm leading-5 text-zinc-500">
+            {barbershop.description ||
+              "Um espaço pensado para cuidar do seu visual e renovar o estilo."}
+          </p>
+        )}
+
+        <div className="mt-auto pt-4">
           {barbershop.name.toLowerCase() === "shinider" && (
             <Link
               href={`/barbershops/${barbershop.id}`}
-              className="mt-5 inline-flex w-full items-center justify-center rounded-lg bg-[#f7e257] px-4 py-2 text-sm font-semibold text-black transition hover:bg-[#ffec70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257] focus-visible:ring-offset-2 focus-visible:ring-offset-[#121212]"
+              className="flex w-full items-center justify-center rounded-lg bg-[#f7e257] px-4 py-2.5 text-sm font-semibold text-black transition hover:bg-[#ffec70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257] focus-visible:ring-offset-2 focus-visible:ring-offset-[#121212]"
             >
               Agendar
             </Link>
           )}
         </div>
-
-        {barbershop.name.toLowerCase() !== "shinider" && (
-          <p className="line-clamp-2 min-h-10 text-sm leading-5 text-zinc-500">
-            {barbershop.description ||
-              "Um espaço pensado para cuidar do seu visual e renovar o estilo."}
-          </p>
-        )}
       </div>
     </article>
   )
