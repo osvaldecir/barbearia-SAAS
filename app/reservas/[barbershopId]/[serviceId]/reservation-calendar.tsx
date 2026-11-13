@@ -1,9 +1,14 @@
 "use client"
 
+import Link from "next/link"
+import { signIn } from "next-auth/react"
 import { useMemo, useState } from "react"
 
 type ReservationCalendarProps = {
   initialDate: string
+  serviceId: string
+  serviceName: string
+  barbershopName: string
   serviceDuration: number
   bookings: {
     date: string
@@ -68,11 +73,18 @@ const formatDate = (date: string, options: Intl.DateTimeFormatOptions) =>
 
 const ReservationCalendar = ({
   initialDate,
+  serviceId,
+  serviceName,
+  barbershopName,
   serviceDuration,
   bookings,
 }: ReservationCalendarProps) => {
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [selectedTime, setSelectedTime] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submissionError, setSubmissionError] = useState("")
+  const [requiresAuthentication, setRequiresAuthentication] = useState(false)
+  const [confirmedBooking, setConfirmedBooking] = useState<string | null>(null)
   const [visibleMonth, setVisibleMonth] = useState(
     `${initialDate.slice(0, 7)}-01`,
   )
@@ -157,6 +169,49 @@ const ReservationCalendar = ({
     monthDates.find((date) => date >= initialDate && date <= lastDate) ??
     initialDate
   const selectedSlots = slotsByDate[activeDate] ?? []
+
+  const confirmBooking = async () => {
+    if (!selectedTime || isSubmitting) {
+      return
+    }
+
+    setIsSubmitting(true)
+    setSubmissionError("")
+    setRequiresAuthentication(false)
+    setConfirmedBooking(null)
+
+    try {
+      const [hour, minute] = selectedTime.split(":").map(Number)
+      const date = new Date(
+        getDateTimeInBusinessTimeZone(activeDate, hour, minute),
+      ).toISOString()
+      const response = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ serviceId, date }),
+      })
+      const result = (await response.json()) as {
+        error?: string
+        booking?: { date: string }
+      }
+
+      if (!response.ok || !result.booking) {
+        setRequiresAuthentication(response.status === 401)
+        setSubmissionError(
+          result.error ?? "Não foi possível confirmar a reserva. Tente novamente.",
+        )
+        return
+      }
+
+      setConfirmedBooking(result.booking.date)
+    } catch {
+      setSubmissionError(
+        "Não foi possível confirmar a reserva. Verifique sua conexão e tente novamente.",
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   return (
     <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(280px,0.9fr)]">
@@ -287,6 +342,58 @@ const ReservationCalendar = ({
             Horário selecionado:{" "}
             <strong className="text-[#f7e257]">{selectedTime}</strong>
           </p>
+        )}
+        {selectedTime && (
+          <button
+            type="button"
+            onClick={confirmBooking}
+            disabled={isSubmitting}
+            className="mt-5 w-full rounded-lg bg-[#f7e257] px-5 py-3 font-bold text-black transition hover:bg-[#ffec70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257] disabled:cursor-wait disabled:opacity-60"
+          >
+            {isSubmitting ? "Confirmando..." : "Confirmar reserva"}
+          </button>
+        )}
+        {submissionError && (
+          <div role="alert" className="mt-4 text-sm text-red-400">
+            <p>{submissionError}</p>
+            {requiresAuthentication && (
+              <button
+                type="button"
+                onClick={() =>
+                  signIn("google", { callbackUrl: window.location.href })
+                }
+                className="mt-2 font-semibold underline underline-offset-4"
+              >
+                Entrar com Google
+              </button>
+            )}
+          </div>
+        )}
+        {confirmedBooking && (
+          <div
+            role="status"
+            className="mt-5 rounded-xl border border-[#f7e257]/30 bg-[#f7e257]/10 p-4 text-sm text-zinc-200"
+          >
+            <p className="font-semibold text-[#f7e257]">
+              Reserva confirmada!
+            </p>
+            <p className="mt-2">
+              {serviceName} · {barbershopName}
+            </p>
+            <p className="mt-1">
+              {new Intl.DateTimeFormat("pt-BR", {
+                dateStyle: "long",
+                timeStyle: "short",
+                timeZone: businessTimeZone,
+              }).format(new Date(confirmedBooking))}
+            </p>
+            <Link
+              href="/bookings"
+              className="mt-3 inline-flex font-semibold text-[#f7e257] underline underline-offset-4"
+            >
+              Ver meus agendamentos
+            </Link>
+          </div>
         )}
       </section>
     </div>

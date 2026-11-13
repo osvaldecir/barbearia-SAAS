@@ -44,7 +44,7 @@ const Header = async () => {
         </div>
         <div className="flex items-center gap-2">
           <Link
-            href="#booking-heading"
+            href="/bookings"
             className="inline-flex items-center gap-2 rounded-full border border-[#f7e257]/30 bg-[#f7e257]/10 px-4 py-2 text-sm font-medium text-[#f7e257] transition hover:border-[#f7e257]/60 hover:bg-[#f7e257]/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257] focus-visible:ring-offset-2 focus-visible:ring-offset-[#080808]"
           >
             <CalendarDays aria-hidden="true" className="h-4 w-4" />

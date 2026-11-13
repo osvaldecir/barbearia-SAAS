@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import { useState } from "react"
 import type { barbershopService } from "@/generated/prisma/client"
 
@@ -113,15 +114,13 @@ const ServiceItem = ({
           )}
         </span>
       </button>
-      <a
+      <Link
         href={`/reservas/${service.barbershopId}/${service.id}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label={`Fazer reserva de ${service.name} em uma nova aba`}
+        aria-label={`Fazer reserva de ${service.name}`}
         className="mt-3 inline-flex items-center justify-center rounded-lg bg-[#f7e257] px-5 py-2.5 text-sm font-bold text-black transition hover:bg-[#ffec70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1f1f1f]"
       >
         Fazer reserva
-      </a>
+      </Link>
     </article>
   )
 }

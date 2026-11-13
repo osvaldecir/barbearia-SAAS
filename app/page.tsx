@@ -5,9 +5,11 @@ import {
   MessageCircle,
   Smartphone,
 } from "lucide-react"
+import { getServerSession } from "next-auth"
 import Image from "next/image"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
+import { authOptions } from "@/app/lib/auth-options"
 import ServiceSearch from "@/components/service-search"
 import UserGreeting from "@/components/user-greeting"
 import BarbershopItem from "@/_components/barbershop-item"
@@ -16,7 +18,9 @@ import { db } from "@/_lib/prisma"
 export const dynamic = "force-dynamic"
 
 export default async function Home() {
-  const barberShops = await db.barbershop.findMany({
+  const [session, barberShops] = await Promise.all([
+    getServerSession(authOptions),
+    db.barbershop.findMany({
     where: {
       name: {
         equals: "shinider",
@@ -36,7 +40,38 @@ export default async function Home() {
       },
     },
     orderBy: { name: "asc" },
-  })
+    }),
+  ])
+  const userEmail = session?.user?.email
+  const user = userEmail
+    ? await db.user.findUnique({
+        where: { email: userEmail },
+        select: { id: true },
+      })
+    : null
+  const nextBooking = user
+    ? await db.booking.findFirst({
+        where: {
+          userId: user.id,
+          status: "confirmed",
+          date: { gte: new Date() },
+        },
+        include: {
+          barbershopService: {
+            include: {
+              barbershop: {
+                select: {
+                  name: true,
+                  address: true,
+                  phones: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: { date: "asc" },
+      })
+    : null
   const searchableServices = barberShops.flatMap((barbershop) =>
     barbershop.barbershopServices
       .filter((service) => service.name.trim().toLowerCase() !== "shinider")
@@ -204,6 +239,7 @@ export default async function Home() {
               </div>
             </div>
 
+            {nextBooking ? (
             <article className="overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#191919] to-[#101010] shadow-xl shadow-black/20">
               <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
                 <span className="text-sm font-medium text-zinc-300">
@@ -217,17 +253,28 @@ export default async function Home() {
               <div className="flex items-center gap-4 p-5">
                 <div className="flex h-[72px] w-[72px] shrink-0 flex-col items-center justify-center rounded-xl border border-[#f7e257]/20 bg-[#f7e257]/10">
                   <span className="text-[11px] font-semibold uppercase tracking-wider text-[#f7e257]">
-                    Dezembro
+                    {new Intl.DateTimeFormat("pt-BR", {
+                      month: "long",
+                      timeZone: "America/Sao_Paulo",
+                    }).format(nextBooking.date)}
                   </span>
                   <span className="text-2xl font-bold leading-tight text-white">
-                    08
+                    {new Intl.DateTimeFormat("pt-BR", {
+                      day: "2-digit",
+                      timeZone: "America/Sao_Paulo",
+                    }).format(nextBooking.date)}
                   </span>
-                  <span className="text-[10px] text-zinc-400">2026</span>
+                  <span className="text-[10px] text-zinc-400">
+                    {new Intl.DateTimeFormat("pt-BR", {
+                      year: "numeric",
+                      timeZone: "America/Sao_Paulo",
+                    }).format(nextBooking.date)}
+                  </span>
                 </div>
 
                 <div className="min-w-0">
                   <h3 className="truncate text-lg font-semibold text-white">
-                    Corte de cabelo
+                    {nextBooking.barbershopService.name}
                   </h3>
                   <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-zinc-400">
                     <span className="inline-flex items-center gap-1.5">
@@ -235,14 +282,21 @@ export default async function Home() {
                         aria-hidden="true"
                         className="h-4 w-4 text-[#f7e257]"
                       />
-                      01/10/2026
+                      {new Intl.DateTimeFormat("pt-BR", {
+                        dateStyle: "short",
+                        timeZone: "America/Sao_Paulo",
+                      }).format(nextBooking.date)}
                     </span>
                     <span className="inline-flex items-center gap-1.5">
                       <Clock3
                         aria-hidden="true"
                         className="h-4 w-4 text-[#f7e257]"
                       />
-                      16:00
+                      {new Intl.DateTimeFormat("pt-BR", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        timeZone: "America/Sao_Paulo",
+                      }).format(nextBooking.date)}
                     </span>
                   </div>
                 </div>
@@ -253,7 +307,7 @@ export default async function Home() {
                   aria-hidden="true"
                   className="mt-0.5 h-4 w-4 shrink-0 text-[#f7e257]"
                 />
-                <span>Rua Pernambuco, 123</span>
+                <span>{nextBooking.barbershopService.barbershop.address}</span>
               </div>
               <div className="flex items-center gap-2 border-t border-white/10 px-5 py-4 text-sm text-zinc-400">
                 <Smartphone
@@ -261,13 +315,13 @@ export default async function Home() {
                   className="h-4 w-4 shrink-0 text-[#f7e257]"
                 />
                 <a
-                  href="tel:+5517988126114"
+                  href={`tel:${nextBooking.barbershopService.barbershop.phones.replace(/\D/g, "")}`}
                   className="transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
                 >
-                  17 98812-6114
+                  {nextBooking.barbershopService.barbershop.phones}
                 </a>
                 <a
-                  href="https://wa.me/5517988126114"
+                  href={`https://wa.me/${nextBooking.barbershopService.barbershop.phones.replace(/\D/g, "")}`}
                   target="_blank"
                   rel="noreferrer"
                   aria-label="Conversar pelo WhatsApp"
@@ -281,6 +335,21 @@ export default async function Home() {
                 </a>
               </div>
             </article>
+            ) : (
+              <article className="rounded-2xl border border-white/10 bg-gradient-to-br from-[#191919] to-[#101010] p-5 shadow-xl shadow-black/20">
+                <p className="font-semibold text-white">
+                  {userEmail
+                    ? "Você não tem agendamentos confirmados próximos."
+                    : "Entre para acompanhar seus agendamentos."}
+                </p>
+                <Link
+                  href={userEmail ? appointmentsHref : "/api/auth/signin"}
+                  className="mt-3 inline-flex font-semibold text-[#f7e257] underline underline-offset-4"
+                >
+                  {userEmail ? "Agendar um serviço" : "Fazer login"}
+                </Link>
+              </article>
+            )}
           </section>
 
           <section

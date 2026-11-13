@@ -79,6 +79,9 @@ const ReservationPage = async ({ params }: ReservationPageProps) => {
         </p>
         <ReservationCalendar
           initialDate={startDate}
+          serviceId={service.id}
+          serviceName={service.name}
+          barbershopName={service.barbershop.name}
           serviceDuration={service.duration ?? 30}
           bookings={bookings.map((booking) => ({
             date: booking.date.toISOString(),
@@ -86,12 +89,20 @@ const ReservationPage = async ({ params }: ReservationPageProps) => {
             status: booking.status,
           }))}
         />
-        <Link
-          href={`/barbershops/${params.barbershopId}`}
-          className="mt-6 inline-flex rounded-lg border border-white/10 px-5 py-3 text-sm font-bold text-zinc-200 transition hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
-        >
-          Voltar aos serviços
-        </Link>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link
+            href={`/barbershops/${params.barbershopId}`}
+            className="inline-flex rounded-lg border border-white/10 px-5 py-3 text-sm font-bold text-zinc-200 transition hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
+          >
+            Voltar aos serviços
+          </Link>
+          <Link
+            href="/"
+            className="inline-flex rounded-lg border border-[#f7e257]/40 px-5 py-3 text-sm font-bold text-[#f7e257] transition hover:bg-[#f7e257]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
+          >
+            Voltar à tela inicial
+          </Link>
+        </div>
       </section>
     </main>
   )
