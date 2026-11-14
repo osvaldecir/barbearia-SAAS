@@ -84,6 +84,7 @@ const ReservationCalendar = ({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submissionError, setSubmissionError] = useState("")
   const [requiresAuthentication, setRequiresAuthentication] = useState(false)
+  const [whatsappProfileHref, setWhatsappProfileHref] = useState("")
   const [confirmedBooking, setConfirmedBooking] = useState<string | null>(null)
   const [visibleMonth, setVisibleMonth] = useState(
     `${initialDate.slice(0, 7)}-01`,
@@ -153,14 +154,10 @@ const ReservationCalendar = ({
   const monthDates = Array.from({ length: daysInMonth }, (_, index) =>
     addDays(visibleMonth, index),
   )
-  const previousMonth = addDays(
-    `${visibleMonth.slice(0, 7)}-01`,
-    -1,
-  ).slice(0, 7) + "-01"
-  const nextMonth = addDays(
-    `${visibleMonth.slice(0, 7)}-01`,
-    32,
-  ).slice(0, 7) + "-01"
+  const previousMonth =
+    addDays(`${visibleMonth.slice(0, 7)}-01`, -1).slice(0, 7) + "-01"
+  const nextMonth =
+    addDays(`${visibleMonth.slice(0, 7)}-01`, 32).slice(0, 7) + "-01"
   const canGoToPreviousMonth = previousMonth >= `${initialDate.slice(0, 7)}-01`
   const canGoToNextMonth = nextMonth <= `${lastDate.slice(0, 7)}-01`
   const activeDate =
@@ -192,13 +189,20 @@ const ReservationCalendar = ({
       })
       const result = (await response.json()) as {
         error?: string
+        requiresWhatsappProfile?: boolean
         booking?: { date: string }
       }
 
       if (!response.ok || !result.booking) {
         setRequiresAuthentication(response.status === 401)
+        if (result.requiresWhatsappProfile) {
+          setWhatsappProfileHref(
+            `/complete-profile?returnTo=${encodeURIComponent(`${window.location.pathname}${window.location.search}`)}`,
+          )
+        }
         setSubmissionError(
-          result.error ?? "Não foi possível confirmar a reserva. Tente novamente.",
+          result.error ??
+            "Não foi possível confirmar a reserva. Tente novamente.",
         )
         return
       }
@@ -265,7 +269,9 @@ const ReservationCalendar = ({
             const isClosedSunday =
               new Date(`${date}T12:00:00.000Z`).getUTCDay() === 0
             const isAvailable =
-              isInRange && !isClosedSunday && (slotsByDate[date]?.length ?? 0) > 0
+              isInRange &&
+              !isClosedSunday &&
+              (slotsByDate[date]?.length ?? 0) > 0
             const isSelected = activeDate === date
 
             return (
@@ -359,13 +365,24 @@ const ReservationCalendar = ({
             {requiresAuthentication && (
               <button
                 type="button"
-                onClick={() =>
-                  signIn("google", { callbackUrl: window.location.href })
-                }
+                onClick={() => {
+                  const returnTo = `${window.location.pathname}${window.location.search}`
+                  void signIn("google", {
+                    callbackUrl: `/complete-profile?returnTo=${encodeURIComponent(returnTo)}`,
+                  })
+                }}
                 className="mt-2 font-semibold underline underline-offset-4"
               >
                 Entrar com Google
               </button>
+            )}
+            {whatsappProfileHref && (
+              <Link
+                href={whatsappProfileHref}
+                className="mt-2 inline-flex font-semibold text-[#f7e257] underline underline-offset-4"
+              >
+                Cadastrar celular
+              </Link>
             )}
           </div>
         )}
@@ -374,9 +391,7 @@ const ReservationCalendar = ({
             role="status"
             className="mt-5 rounded-xl border border-[#f7e257]/30 bg-[#f7e257]/10 p-4 text-sm text-zinc-200"
           >
-            <p className="font-semibold text-[#f7e257]">
-              Reserva confirmada!
-            </p>
+            <p className="font-semibold text-[#f7e257]">Reserva confirmada!</p>
             <p className="mt-2">
               {serviceName} · {barbershopName}
             </p>

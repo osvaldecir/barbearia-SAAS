@@ -21,25 +21,25 @@ export default async function Home() {
   const [session, barberShops] = await Promise.all([
     getServerSession(authOptions),
     db.barbershop.findMany({
-    where: {
-      name: {
-        equals: "shinider",
-        mode: "insensitive",
-      },
-    },
-    select: {
-      id: true,
-      name: true,
-      description: true,
-      imageUrl: true,
-      barbershopServices: {
-        select: {
-          id: true,
-          name: true,
+      where: {
+        name: {
+          equals: "shinider",
+          mode: "insensitive",
         },
       },
-    },
-    orderBy: { name: "asc" },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        imageUrl: true,
+        barbershopServices: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: { name: "asc" },
     }),
   ])
   const userEmail = session?.user?.email
@@ -49,8 +49,8 @@ export default async function Home() {
         select: { id: true },
       })
     : null
-  const nextBooking = user
-    ? await db.booking.findFirst({
+  const confirmedBookings = user
+    ? await db.booking.findMany({
         where: {
           userId: user.id,
           status: "confirmed",
@@ -71,7 +71,7 @@ export default async function Home() {
         },
         orderBy: { date: "asc" },
       })
-    : null
+    : []
   const searchableServices = barberShops.flatMap((barbershop) =>
     barbershop.barbershopServices
       .filter((service) => service.name.trim().toLowerCase() !== "shinider")
@@ -148,13 +148,13 @@ export default async function Home() {
           <section aria-labelledby="booking-heading" className="lg:order-2">
             <div className="mb-4">
               <p className="mb-1 text-xs font-medium uppercase tracking-[0.2em] text-zinc-500">
-                Sua próxima visita
+                Seus horários confirmados
               </p>
               <h2
                 id="booking-heading"
                 className="text-xl font-semibold tracking-tight text-white"
               >
-                Agendamento
+                Agendamentos
               </h2>
               <div
                 role="group"
@@ -239,102 +239,111 @@ export default async function Home() {
               </div>
             </div>
 
-            {nextBooking ? (
-            <article className="overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#191919] to-[#101010] shadow-xl shadow-black/20">
-              <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
-                <span className="text-sm font-medium text-zinc-300">
-                  Seu horário está reservado
-                </span>
-                <Badge className="h-auto rounded-full border border-[#f7e257]/20 bg-[#f7e257]/10 px-3 py-1 text-[11px] font-semibold text-[#f7e257] hover:bg-[#f7e257]/10">
-                  Confirmado
-                </Badge>
-              </div>
+            {confirmedBookings.length > 0 ? (
+              <div className="space-y-4">
+                {confirmedBookings.map((booking) => (
+                  <article
+                    key={booking.id}
+                    className="overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#191919] to-[#101010] shadow-xl shadow-black/20"
+                  >
+                    <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+                      <span className="text-sm font-medium text-zinc-300">
+                        Seu horário está reservado
+                      </span>
+                      <Badge className="h-auto rounded-full border border-[#f7e257]/20 bg-[#f7e257]/10 px-3 py-1 text-[11px] font-semibold text-[#f7e257] hover:bg-[#f7e257]/10">
+                        Confirmado
+                      </Badge>
+                    </div>
 
-              <div className="flex items-center gap-4 p-5">
-                <div className="flex h-[72px] w-[72px] shrink-0 flex-col items-center justify-center rounded-xl border border-[#f7e257]/20 bg-[#f7e257]/10">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-[#f7e257]">
-                    {new Intl.DateTimeFormat("pt-BR", {
-                      month: "long",
-                      timeZone: "America/Sao_Paulo",
-                    }).format(nextBooking.date)}
-                  </span>
-                  <span className="text-2xl font-bold leading-tight text-white">
-                    {new Intl.DateTimeFormat("pt-BR", {
-                      day: "2-digit",
-                      timeZone: "America/Sao_Paulo",
-                    }).format(nextBooking.date)}
-                  </span>
-                  <span className="text-[10px] text-zinc-400">
-                    {new Intl.DateTimeFormat("pt-BR", {
-                      year: "numeric",
-                      timeZone: "America/Sao_Paulo",
-                    }).format(nextBooking.date)}
-                  </span>
-                </div>
+                    <div className="flex items-center gap-4 p-5">
+                      <div className="flex h-[72px] w-[72px] shrink-0 flex-col items-center justify-center rounded-xl border border-[#f7e257]/20 bg-[#f7e257]/10">
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-[#f7e257]">
+                          {new Intl.DateTimeFormat("pt-BR", {
+                            month: "long",
+                            timeZone: "America/Sao_Paulo",
+                          }).format(booking.date)}
+                        </span>
+                        <span className="text-2xl font-bold leading-tight text-white">
+                          {new Intl.DateTimeFormat("pt-BR", {
+                            day: "2-digit",
+                            timeZone: "America/Sao_Paulo",
+                          }).format(booking.date)}
+                        </span>
+                        <span className="text-[10px] text-zinc-400">
+                          {new Intl.DateTimeFormat("pt-BR", {
+                            year: "numeric",
+                            timeZone: "America/Sao_Paulo",
+                          }).format(booking.date)}
+                        </span>
+                      </div>
 
-                <div className="min-w-0">
-                  <h3 className="truncate text-lg font-semibold text-white">
-                    {nextBooking.barbershopService.name}
-                  </h3>
-                  <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-zinc-400">
-                    <span className="inline-flex items-center gap-1.5">
-                      <CalendarDays
+                      <div className="min-w-0">
+                        <h3 className="truncate text-lg font-semibold text-white">
+                          {booking.barbershopService.name}
+                        </h3>
+                        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-zinc-400">
+                          <span className="inline-flex items-center gap-1.5">
+                            <CalendarDays
+                              aria-hidden="true"
+                              className="h-4 w-4 text-[#f7e257]"
+                            />
+                            {new Intl.DateTimeFormat("pt-BR", {
+                              dateStyle: "short",
+                              timeZone: "America/Sao_Paulo",
+                            }).format(booking.date)}
+                          </span>
+                          <span className="inline-flex items-center gap-1.5">
+                            <Clock3
+                              aria-hidden="true"
+                              className="h-4 w-4 text-[#f7e257]"
+                            />
+                            {new Intl.DateTimeFormat("pt-BR", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              timeZone: "America/Sao_Paulo",
+                            }).format(booking.date)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-2 border-t border-white/10 px-5 py-4 text-sm text-zinc-400">
+                      <MapPin
                         aria-hidden="true"
-                        className="h-4 w-4 text-[#f7e257]"
+                        className="mt-0.5 h-4 w-4 shrink-0 text-[#f7e257]"
                       />
-                      {new Intl.DateTimeFormat("pt-BR", {
-                        dateStyle: "short",
-                        timeZone: "America/Sao_Paulo",
-                      }).format(nextBooking.date)}
-                    </span>
-                    <span className="inline-flex items-center gap-1.5">
-                      <Clock3
+                      <span>
+                        {booking.barbershopService.barbershop.address}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 border-t border-white/10 px-5 py-4 text-sm text-zinc-400">
+                      <Smartphone
                         aria-hidden="true"
-                        className="h-4 w-4 text-[#f7e257]"
+                        className="h-4 w-4 shrink-0 text-[#f7e257]"
                       />
-                      {new Intl.DateTimeFormat("pt-BR", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        timeZone: "America/Sao_Paulo",
-                      }).format(nextBooking.date)}
-                    </span>
-                  </div>
-                </div>
+                      <a
+                        href={`tel:${booking.barbershopService.barbershop.phones.replace(/\D/g, "")}`}
+                        className="transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
+                      >
+                        {booking.barbershopService.barbershop.phones}
+                      </a>
+                      <a
+                        href={`https://wa.me/${booking.barbershopService.barbershop.phones.replace(/\D/g, "")}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label="Conversar pelo WhatsApp"
+                        className="ml-10 inline-flex items-center gap-2 rounded-full text-zinc-400 transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
+                      >
+                        <MessageCircle
+                          aria-hidden="true"
+                          className="h-5 w-5 text-[#f7e257]"
+                        />
+                        <span>Chamar no WhatsApp</span>
+                      </a>
+                    </div>
+                  </article>
+                ))}
               </div>
-
-              <div className="flex items-start gap-2 border-t border-white/10 px-5 py-4 text-sm text-zinc-400">
-                <MapPin
-                  aria-hidden="true"
-                  className="mt-0.5 h-4 w-4 shrink-0 text-[#f7e257]"
-                />
-                <span>{nextBooking.barbershopService.barbershop.address}</span>
-              </div>
-              <div className="flex items-center gap-2 border-t border-white/10 px-5 py-4 text-sm text-zinc-400">
-                <Smartphone
-                  aria-hidden="true"
-                  className="h-4 w-4 shrink-0 text-[#f7e257]"
-                />
-                <a
-                  href={`tel:${nextBooking.barbershopService.barbershop.phones.replace(/\D/g, "")}`}
-                  className="transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
-                >
-                  {nextBooking.barbershopService.barbershop.phones}
-                </a>
-                <a
-                  href={`https://wa.me/${nextBooking.barbershopService.barbershop.phones.replace(/\D/g, "")}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="Conversar pelo WhatsApp"
-                  className="ml-10 inline-flex items-center gap-2 rounded-full text-zinc-400 transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
-                >
-                  <MessageCircle
-                    aria-hidden="true"
-                    className="h-5 w-5 text-[#f7e257]"
-                  />
-                  <span>Chamar no WhatsApp</span>
-                </a>
-              </div>
-            </article>
             ) : (
               <article className="rounded-2xl border border-white/10 bg-gradient-to-br from-[#191919] to-[#101010] p-5 shadow-xl shadow-black/20">
                 <p className="font-semibold text-white">
@@ -416,7 +425,6 @@ export default async function Home() {
               </div>
             ))}
           </div>
-          
 
           <footer className="mt-10 border-t border-white/10 pt-6 text-center">
             <p className="text-sm text-zinc-500">

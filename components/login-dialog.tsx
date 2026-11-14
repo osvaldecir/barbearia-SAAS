@@ -14,9 +14,14 @@ const LoginDialog = () => {
     setSignInError("")
 
     try {
-      await signIn("google", { callbackUrl: "/" })
+      const returnTo = `${window.location.pathname}${window.location.search}`
+      await signIn("google", {
+        callbackUrl: `/complete-profile?returnTo=${encodeURIComponent(returnTo)}`,
+      })
     } catch {
-      setSignInError("Não foi possível iniciar o login com Google. Tente novamente.")
+      setSignInError(
+        "Não foi possível iniciar o login com Google. Tente novamente.",
+      )
       setIsSigningIn(false)
     }
   }

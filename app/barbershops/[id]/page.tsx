@@ -1,7 +1,6 @@
-import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
 import { notFound } from "next/navigation"
 import { db } from "@/_lib/prisma"
+import BackButton from "../back-button"
 import ServiceItem from "../service-item"
 
 const serviceOrder = [
@@ -55,15 +54,6 @@ const BarbershopPage = async ({
 
   return (
     <main className="flex min-h-screen w-full flex-col items-start gap-4 px-5 py-12">
-      <div className="w-full max-w-[351px]">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-3 rounded-lg px-5 py-3 text-lg font-semibold text-[#f7e257] transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
-        >
-          <ArrowLeft aria-hidden="true" className="h-6 w-6" />
-          Voltar
-        </Link>
-      </div>
       <div className="flex w-full flex-col items-start gap-6">
         <section className="w-full flex-1 space-y-4">
           {visibleServices.length > 0 ? (
@@ -92,6 +82,9 @@ const BarbershopPage = async ({
             </p>
           )}
         </section>
+        <div className="w-full pt-2">
+          <BackButton />
+        </div>
       </div>
     </main>
   )

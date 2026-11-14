@@ -83,7 +83,11 @@ export async function POST(request: Request) {
   const [user, service] = await Promise.all([
     db.user.findUnique({
       where: { email },
-      select: { id: true },
+      select: {
+        id: true,
+        whatsappPhone: true,
+        whatsappReminderConsentAt: true,
+      },
     }),
     db.barbershopService.findUnique({
       where: { id: body.serviceId },
@@ -99,6 +103,15 @@ export async function POST(request: Request) {
     return NextResponse.json(
       { error: "Não foi possível identificar sua conta. Entre novamente." },
       { status: 401 },
+    )
+  }
+  if (!user.whatsappPhone) {
+    return NextResponse.json(
+      {
+        error: "Complete seu cadastro com o celular antes de fazer a reserva.",
+        requiresWhatsappProfile: true,
+      },
+      { status: 409 },
     )
   }
   if (!service) {
@@ -129,7 +142,9 @@ export async function POST(request: Request) {
   })
   const longestService = Math.max(
     slotIntervalMinutes,
-    ...services.map(({ duration: serviceDuration }) => serviceDuration ?? slotIntervalMinutes),
+    ...services.map(
+      ({ duration: serviceDuration }) => serviceDuration ?? slotIntervalMinutes,
+    ),
   )
   const existingBookings = await db.booking.findMany({
     where: {
@@ -171,6 +186,8 @@ export async function POST(request: Request) {
       barbershopServiceId: service.id,
       date: start,
       status: "confirmed",
+      whatsappPhone: user.whatsappReminderConsentAt ? user.whatsappPhone : null,
+      whatsappReminderConsentAt: user.whatsappReminderConsentAt,
     },
     select: { id: true, date: true },
   })
