@@ -19,6 +19,7 @@ async function seedDatabase() {
     const creativeNames = ["shinider"]
 
     const addresses = ["rua pernambuco, 123"]
+    const contactPhone = "(17) 98812-6114"
 
     const services = [
       {
@@ -140,10 +141,15 @@ async function seedDatabase() {
     // Criar todas as barbearias e seus serviços associados em paralelo
     const barbershopPromises = creativeNames.map(async (name, i) => {
       const existingBarbershop = existingBarbershops.find(
-        (shop) => shop.name === name,
+        (shop) => shop.name.toLowerCase() === name.toLowerCase(),
       )
 
       if (existingBarbershop) {
+        await prisma.barbershop.update({
+          where: { id: existingBarbershop.id },
+          data: { phones: contactPhone },
+        })
+
         const existingServices = await prisma.barbershopService.findMany({
           where: { barbershopId: existingBarbershop.id },
           select: { id: true, name: true },
@@ -178,7 +184,7 @@ async function seedDatabase() {
           name,
           address: addresses[i],
           imageUrl: images[i],
-          phones: "(11) 99999-9999",
+          phones: contactPhone,
           description:
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac augue ullamcorper, pharetra orci mollis, auctor tellus. Phasellus pharetra erat ac libero efficitur tempus. Donec pretium convallis iaculis. Etiam eu felis sollicitudin, cursus mi vitae, iaculis magna. Nam non erat neque. In hac habitasse platea dictumst. Pellentesque molestie accumsan tellus id laoreet.",
           barbershopServices: {

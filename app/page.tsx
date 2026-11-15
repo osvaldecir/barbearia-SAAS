@@ -17,6 +17,11 @@ import { db } from "@/_lib/prisma"
 
 export const dynamic = "force-dynamic"
 
+const toWhatsAppPhone = (phone: string) => {
+  const phoneDigits = phone.replace(/\D/g, "")
+  return phoneDigits.startsWith("55") ? phoneDigits : `55${phoneDigits}`
+}
+
 export default async function Home() {
   const [session, barberShops] = await Promise.all([
     getServerSession(authOptions),
@@ -32,6 +37,8 @@ export default async function Home() {
         name: true,
         description: true,
         imageUrl: true,
+        address: true,
+        phones: true,
         barbershopServices: {
           select: {
             id: true,
@@ -328,7 +335,7 @@ export default async function Home() {
                         {booking.barbershopService.barbershop.phones}
                       </a>
                       <a
-                        href={`https://wa.me/${booking.barbershopService.barbershop.phones.replace(/\D/g, "")}`}
+                        href={`https://wa.me/${toWhatsAppPhone(booking.barbershopService.barbershop.phones)}`}
                         target="_blank"
                         rel="noreferrer"
                         aria-label="Conversar pelo WhatsApp"
