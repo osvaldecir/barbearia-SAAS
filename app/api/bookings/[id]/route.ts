@@ -37,7 +37,6 @@ export async function PATCH(_request: Request, { params }: BookingRouteContext) 
       id: params.id,
       userId: user.id,
       status: "confirmed",
-      date: { gt: new Date() },
     },
     data: { status: "cancelled" },
   })

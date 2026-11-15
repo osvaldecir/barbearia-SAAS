@@ -61,7 +61,6 @@ export default async function Home() {
         where: {
           userId: user.id,
           status: "confirmed",
-          date: { gte: new Date() },
         },
         include: {
           barbershopService: {
@@ -105,7 +104,7 @@ export default async function Home() {
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-[radial-gradient(ellipse_at_top,_rgba(247,226,87,0.09),_transparent_65%)]" />
       <div className="relative mx-auto max-w-6xl">
         <section className="mb-8 flex flex-col gap-6 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
-          <UserGreeting />
+          <UserGreeting name={session?.user?.name} image={session?.user?.image} />
 
           <ServiceSearch services={searchableServices} />
         </section>

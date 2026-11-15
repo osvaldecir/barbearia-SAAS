@@ -78,8 +78,7 @@ export default async function BookingsPage() {
                         ? "Cancelado"
                         : booking.status}
                   </p>
-                  {booking.status === "confirmed" &&
-                    booking.date > new Date() && (
+                  {booking.status === "confirmed" && (
                       <BookingCancelButton
                         bookingId={booking.id}
                         isCancelled={false}
