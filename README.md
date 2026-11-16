@@ -24,6 +24,8 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 Defina `BARBERSHOP_OWNER_EMAIL` com o e-mail da conta Google do proprietário, tanto no ambiente local quanto nas variáveis do projeto na Vercel. Depois de entrar com essa conta, o link **Gestão** abre `/admin/agendamentos`, que exibe os agendamentos da barbearia Shinider. Outras contas não têm acesso a essa página.
 
+Na área Gestão, o relatório mensal separa agendamentos previstos, pagamentos registrados e despesas lançadas. O proprietário pode registrar a forma e a data do recebimento, adicionar ou remover despesas e exportar o movimento do mês em CSV. O valor previsto usa o preço atual do serviço; o pagamento registrado guarda o valor do serviço no momento do registro. A migração `20261116180000_add_barbershop_accounting` deve ser aplicada antes de publicar a atualização (`npx prisma migrate deploy`).
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
