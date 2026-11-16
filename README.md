@@ -20,6 +20,10 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Acesso do proprietário
+
+Defina `BARBERSHOP_OWNER_EMAIL` com o e-mail da conta Google do proprietário, tanto no ambiente local quanto nas variáveis do projeto na Vercel. Depois de entrar com essa conta, o link **Gestão** abre `/admin/agendamentos`, que exibe os agendamentos da barbearia Shinider. Outras contas não têm acesso a essa página.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

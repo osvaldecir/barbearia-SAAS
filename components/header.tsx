@@ -1,29 +1,35 @@
 import { CalendarDays } from "lucide-react"
+import { getServerSession } from "next-auth"
 import Image from "next/image"
 import Link from "next/link"
 import { db } from "@/_lib/prisma"
+import { authOptions } from "@/app/lib/auth-options"
+import { isBarbershopOwner } from "@/app/lib/barbershop-owner"
 import LoginDialog from "@/components/login-dialog"
 import ServiceMenu from "@/components/service-menu"
 
 const Header = async () => {
-  const barbershop = await db.barbershop.findFirst({
-    where: {
-      name: {
-        equals: "shinider",
-        mode: "insensitive",
-      },
-    },
-    select: {
-      id: true,
-      barbershopServices: {
-        select: {
-          id: true,
-          name: true,
+  const [session, barbershop] = await Promise.all([
+    getServerSession(authOptions),
+    db.barbershop.findFirst({
+      where: {
+        name: {
+          equals: "shinider",
+          mode: "insensitive",
         },
-        orderBy: { name: "asc" },
       },
-    },
-  })
+      select: {
+        id: true,
+        barbershopServices: {
+          select: {
+            id: true,
+            name: true,
+          },
+          orderBy: { name: "asc" },
+        },
+      },
+    }),
+  ])
   const visibleServices =
     barbershop?.barbershopServices.filter(
       (service) => service.name.trim().toLowerCase() !== "shinider",
@@ -51,6 +57,14 @@ const Header = async () => {
             <span className="hidden sm:inline">Meus agendamentos</span>
             <span className="sm:hidden">Agendamentos</span>
           </Link>
+          {isBarbershopOwner(session?.user?.email) && (
+            <Link
+              href="/admin/agendamentos"
+              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257]"
+            >
+              Gestão
+            </Link>
+          )}
           <LoginDialog />
           <ServiceMenu
             barbershopId={barbershop?.id ?? null}
@@ -58,7 +72,6 @@ const Header = async () => {
           />
         </div>
       </div>
-      
     </header>
   )
 }
