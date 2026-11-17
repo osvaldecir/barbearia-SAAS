@@ -15,6 +15,7 @@ import { isBarbershopOwner } from "@/app/lib/barbershop-owner"
 import { db } from "@/_lib/prisma"
 import ExpenseDeleteButton from "./expense-delete-button"
 import ExpenseForm from "./expense-form"
+import ClosedDaysManager from "./closed-days-manager"
 import PaymentButton from "./payment-button"
 
 type AdminBookingsPageProps = {
@@ -44,12 +45,24 @@ export default async function AdminBookingsPage({
       ? searchParams.month
       : getCurrentAccountingMonth()
   const range = getAccountingMonthRange(month)
+  const todayParts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: accountingTimeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  })
+    .formatToParts(new Date())
+    .reduce<Record<string, string>>((parts, { type, value }) => {
+      parts[type] = value
+      return parts
+    }, {})
+  const today = `${todayParts.year}-${todayParts.month}-${todayParts.day}`
   const barbershop = await db.barbershop.findFirst({
     where: { name: { equals: "shinider", mode: "insensitive" } },
     select: { id: true, name: true },
   })
 
-  const [bookings, payments, expenses] = barbershop
+  const [bookings, payments, expenses, closedDays] = barbershop
     ? await Promise.all([
         db.booking.findMany({
           where: {
@@ -80,8 +93,18 @@ export default async function AdminBookingsPage({
           },
           orderBy: { date: "desc" },
         }),
+        db.barbershopClosedDay.findMany({
+          where: {
+            barbershopId: barbershop.id,
+            date: {
+              gte: new Date(`${today}T00:00:00.000Z`),
+              lte: new Date("2050-12-31T00:00:00.000Z"),
+            },
+          },
+          orderBy: { date: "asc" },
+        }),
       ])
-    : [[], [], []]
+    : [[], [], [], []]
 
   const expectedCents = bookings.reduce(
     (total, booking) =>
@@ -153,6 +176,21 @@ export default async function AdminBookingsPage({
               Exportar CSV
             </a>
           </div>
+        </section>
+
+        <section className="rounded-2xl border border-white/10 bg-[#121212] p-6">
+          <h2 className="text-xl font-semibold">Dias sem atendimento</h2>
+          <p className="mt-2 text-sm text-zinc-400">
+            Bloqueie novas reservas em dias úteis que a barbearia não abrirá.
+            Agendamentos já confirmados não serão cancelados.
+          </p>
+          <ClosedDaysManager
+            initialDate={today}
+            closedDays={closedDays.map((closedDay) => ({
+              id: closedDay.id,
+              date: closedDay.date.toISOString().slice(0, 10),
+            }))}
+          />
         </section>
 
         <section

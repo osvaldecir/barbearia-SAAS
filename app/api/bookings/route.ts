@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth"
 import { NextResponse } from "next/server"
 import { authOptions } from "@/app/lib/auth-options"
+import { isBrazilianNationalHoliday } from "@/app/lib/brazilian-national-holidays"
 import { db } from "@/_lib/prisma"
 
 const businessTimeZone = "America/Sao_Paulo"
@@ -70,8 +71,9 @@ export async function POST(request: Request) {
   if (
     start.getTime() <= Date.now() ||
     localWeekday === 0 ||
+    isBrazilianNationalHoliday(localDate) ||
     localHour < 8 ||
-    localHour >= 22 ||
+    localHour >= 19 ||
     localMinute % slotIntervalMinutes !== 0
   ) {
     return NextResponse.json(
@@ -121,6 +123,22 @@ export async function POST(request: Request) {
     )
   }
 
+  const closedDay = await db.barbershopClosedDay.findUnique({
+    where: {
+      barbershopId_date: {
+        barbershopId: service.barbershopId,
+        date: new Date(`${localDate}T00:00:00.000Z`),
+      },
+    },
+    select: { id: true },
+  })
+  if (closedDay) {
+    return NextResponse.json(
+      { error: "A barbearia não atenderá nesta data. Escolha outro dia." },
+      { status: 400 },
+    )
+  }
+
   const duration = service.duration ?? slotIntervalMinutes
   const end = new Date(start.getTime() + duration * 60_000)
   const endParts = getBusinessTimeParts(end)
@@ -128,7 +146,7 @@ export async function POST(request: Request) {
 
   if (
     `${endParts.year}-${endParts.month}-${endParts.day}` !== localDate ||
-    endTime > 22 * 60
+    endTime > 19 * 60
   ) {
     return NextResponse.json(
       { error: "Esse serviço não cabe no horário de atendimento selecionado." },

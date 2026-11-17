@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { signIn } from "next-auth/react"
 import { useMemo, useState } from "react"
+import { isBrazilianNationalHoliday } from "@/app/lib/brazilian-national-holidays"
 
 type ReservationCalendarProps = {
   initialDate: string
@@ -10,6 +11,7 @@ type ReservationCalendarProps = {
   serviceName: string
   barbershopName: string
   serviceDuration: number
+  closedDates: string[]
   bookings: {
     date: string
     duration: number | null
@@ -18,10 +20,19 @@ type ReservationCalendarProps = {
 }
 
 const businessTimeZone = "America/Sao_Paulo"
-const bookingWindowDays = 30
+const maxBookingDate = "2050-12-31"
 const slotIntervalMinutes = 30
 const openingHour = 8
-const closingHour = 22
+const closingHour = 19
+const businessTimeFormatter = new Intl.DateTimeFormat("en-CA", {
+  timeZone: businessTimeZone,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23",
+})
 
 const addDays = (date: string, days: number) => {
   const value = new Date(`${date}T12:00:00.000Z`)
@@ -37,18 +48,9 @@ const getDateTimeInBusinessTimeZone = (
   const [year, month, day] = date.split("-").map(Number)
   const targetTime = Date.UTC(year, month - 1, day, hour, minute)
   let timestamp = targetTime
-  const formatter = new Intl.DateTimeFormat("en-CA", {
-    timeZone: businessTimeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-  })
 
   for (let attempt = 0; attempt < 2; attempt += 1) {
-    const parts = formatter.formatToParts(new Date(timestamp))
+    const parts = businessTimeFormatter.formatToParts(new Date(timestamp))
     const values = Object.fromEntries(
       parts.map(({ type, value }) => [type, Number(value)]),
     )
@@ -77,6 +79,7 @@ const ReservationCalendar = ({
   serviceName,
   barbershopName,
   serviceDuration,
+  closedDates,
   bookings,
 }: ReservationCalendarProps) => {
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
@@ -89,6 +92,29 @@ const ReservationCalendar = ({
   const [visibleMonth, setVisibleMonth] = useState(
     `${initialDate.slice(0, 7)}-01`,
   )
+  const firstDayOfMonth = new Date(`${visibleMonth}T12:00:00.000Z`)
+  const daysInMonth = new Date(
+    Date.UTC(
+      firstDayOfMonth.getUTCFullYear(),
+      firstDayOfMonth.getUTCMonth() + 1,
+      0,
+    ),
+  ).getUTCDate()
+  const monthDates = useMemo(
+    () =>
+      Array.from({ length: daysInMonth }, (_, index) =>
+        addDays(visibleMonth, index),
+      ),
+    [daysInMonth, visibleMonth],
+  )
+  const bookingWindowDays = Math.max(
+    30,
+    Math.ceil(
+      (new Date(`${maxBookingDate}T00:00:00.000Z`).getTime() -
+        new Date(`${initialDate}T00:00:00.000Z`).getTime()) /
+        (24 * 60 * 60 * 1000),
+    ) + 1,
+  )
   const lastDate = addDays(initialDate, bookingWindowDays - 1)
 
   const slotsByDate = useMemo(() => {
@@ -98,12 +124,17 @@ const ReservationCalendar = ({
     )
     const duration = serviceDuration || slotIntervalMinutes
 
-    for (let day = 0; day < bookingWindowDays; day += 1) {
-      const date = addDays(initialDate, day)
+    for (const date of monthDates) {
       const weekday = new Date(`${date}T12:00:00.000Z`).getUTCDay()
       slots[date] = []
 
-      if (weekday === 0) {
+      if (
+        date < initialDate ||
+        date > lastDate ||
+        weekday === 0 ||
+        isBrazilianNationalHoliday(date) ||
+        closedDates.includes(date)
+      ) {
         continue
       }
 
@@ -140,20 +171,16 @@ const ReservationCalendar = ({
     }
 
     return slots
-  }, [bookings, initialDate, serviceDuration])
+  }, [
+    bookings,
+    closedDates,
+    initialDate,
+    lastDate,
+    monthDates,
+    serviceDuration,
+  ])
 
-  const firstDayOfMonth = new Date(`${visibleMonth}T12:00:00.000Z`)
-  const daysInMonth = new Date(
-    Date.UTC(
-      firstDayOfMonth.getUTCFullYear(),
-      firstDayOfMonth.getUTCMonth() + 1,
-      0,
-    ),
-  ).getUTCDate()
   const leadingDays = firstDayOfMonth.getUTCDay()
-  const monthDates = Array.from({ length: daysInMonth }, (_, index) =>
-    addDays(visibleMonth, index),
-  )
   const previousMonth =
     addDays(`${visibleMonth.slice(0, 7)}-01`, -1).slice(0, 7) + "-01"
   const nextMonth =
@@ -266,6 +293,8 @@ const ReservationCalendar = ({
           ))}
           {monthDates.map((date) => {
             const isInRange = date >= initialDate && date <= lastDate
+            const isClosedByManager = closedDates.includes(date)
+            const isNationalHoliday = isBrazilianNationalHoliday(date)
             const isClosedSunday =
               new Date(`${date}T12:00:00.000Z`).getUTCDay() === 0
             const isAvailable =
@@ -279,7 +308,7 @@ const ReservationCalendar = ({
                 key={date}
                 type="button"
                 disabled={!isAvailable}
-                aria-label={`${formatDate(date, { dateStyle: "full" })}${isAvailable ? `, ${slotsByDate[date].length} horários disponíveis` : ", sem horários disponíveis"}`}
+                aria-label={`${formatDate(date, { dateStyle: "full" })}${isNationalHoliday ? ", feriado nacional" : isClosedByManager ? ", fechado pela barbearia" : isAvailable ? `, ${slotsByDate[date].length} horários disponíveis` : ", sem horários disponíveis"}`}
                 aria-pressed={isSelected}
                 onClick={() => {
                   setSelectedDate(date)
@@ -299,7 +328,7 @@ const ReservationCalendar = ({
           })}
         </div>
         <p className="mt-5 text-xs text-zinc-500">
-          Segunda a sábado, das 08h às 22h. Horários de 30 em 30 minutos.
+          Segunda a sábado, das 08h às 19h. Horários de 30 em 30 minutos.
         </p>
       </section>
 
@@ -340,7 +369,9 @@ const ReservationCalendar = ({
           </div>
         ) : (
           <p className="mt-5 rounded-lg border border-white/10 px-4 py-3 text-sm text-zinc-400">
-            Não há horários disponíveis nesta data. Selecione outro dia.
+            {isBrazilianNationalHoliday(activeDate)
+              ? "Não há atendimento em feriados nacionais. Selecione outro dia."
+              : "Não há horários disponíveis nesta data. Selecione outro dia."}
           </p>
         )}
         {selectedTime && (

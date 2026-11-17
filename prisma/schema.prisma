@@ -73,6 +73,7 @@ model barbershop {
   updatedAt          DateTime            @updatedAt
   barbershopServices barbershopService[]
   expenses           barbershopExpense[]
+  closedDays         barbershopClosedDay[]
 }
 
 model barbershopService {
@@ -118,5 +119,15 @@ model barbershopExpense {
   barbershopId String
   barbershop   barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
 
+  @@index([barbershopId, date])
+}
+
+model barbershopClosedDay {
+  id           String     @id @default(cuid())
+  date         DateTime   @db.Date
+  barbershopId String
+  barbershop   barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+
+  @@unique([barbershopId, date])
   @@index([barbershopId, date])
 }

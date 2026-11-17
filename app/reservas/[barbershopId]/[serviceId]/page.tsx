@@ -48,7 +48,7 @@ const ReservationPage = async ({ params }: ReservationPageProps) => {
       },
       date: {
         gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
-        lt: new Date(Date.now() + 31 * 24 * 60 * 60 * 1000),
+        lt: new Date("2050-12-31T23:59:59.999Z"),
       },
     },
     select: {
@@ -63,6 +63,16 @@ const ReservationPage = async ({ params }: ReservationPageProps) => {
     orderBy: {
       date: "asc",
     },
+  })
+  const closedDays = await db.barbershopClosedDay.findMany({
+    where: {
+      barbershopId: params.barbershopId,
+      date: {
+        gte: new Date(`${startDate}T00:00:00.000Z`),
+        lte: new Date("2050-12-31T00:00:00.000Z"),
+      },
+    },
+    select: { date: true },
   })
 
   return (
@@ -83,6 +93,9 @@ const ReservationPage = async ({ params }: ReservationPageProps) => {
           serviceName={service.name}
           barbershopName={service.barbershop.name}
           serviceDuration={service.duration ?? 30}
+          closedDates={closedDays.map((closedDay) =>
+            closedDay.date.toISOString().slice(0, 10),
+          )}
           bookings={bookings.map((booking) => ({
             date: booking.date.toISOString(),
             duration: booking.barbershopService.duration,
