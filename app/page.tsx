@@ -112,13 +112,12 @@ export default async function Home() {
         <div className="relative mb-8 min-h-[220px] overflow-hidden rounded-3xl border border-white/10 bg-[#121212] shadow-2xl shadow-black/40 sm:mb-10 sm:min-h-[280px]">
           <Image
             src="/bannerP.png"
-            alt="Interior de uma barbearia FSW Barber"
+            alt="Barbeiro trabalhando, com o texto Excelência em Beleza Masculina"
             fill
             priority
             sizes="(max-width: 768px) 100vw, 1152px"
-            className="object-cover object-center opacity-65"
+            className="object-cover object-center"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/45 to-black/10" />
         </div>
 
         <div className="mb-8 grid gap-4 md:grid-cols-3">
