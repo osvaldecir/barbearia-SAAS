@@ -3,6 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
+import { getScheduledServicePrices } from "@/app/lib/service-pricing"
 import type { barbershopService } from "@/generated/prisma/client"
 
 interface ServiceItemProps {
@@ -15,22 +16,12 @@ const ServiceItem = ({
   initiallySelected = false,
 }: ServiceItemProps) => {
   const [selected, setSelected] = useState(initiallySelected)
-  const weekdayPrice =
-    service.name === "Cabelo"
-      ? 40
-      : service.name === "Barba"
-        ? 40
-        : service.name === "Cabelo & Barba"
-          ? 80
-          : null
-  const saturdayPrice =
-    service.name === "Cabelo"
-      ? 45
-      : service.name === "Barba"
-        ? 45
-        : service.name === "Cabelo & Barba"
-          ? 90
-          : null
+  const prices = getScheduledServicePrices(service.name, Number(service.price))
+  const hasScheduledPrice = [
+    "cabelo",
+    "barba",
+    "cabelo & barba",
+  ].includes(service.name.trim().toLocaleLowerCase("pt-BR"))
   const durationLabel =
     service.duration != null
       ? service.duration < 60
@@ -74,14 +65,14 @@ const ServiceItem = ({
           </span>
         </span>
         <span className="shrink-0 text-right">
-          {weekdayPrice !== null && saturdayPrice !== null ? (
+          {hasScheduledPrice ? (
             <span className="flex gap-3">
               <span>
                 <span className="block text-[9px] font-semibold uppercase text-zinc-300">
                   Seg a qui
                 </span>
                 <span className="text-sm font-bold text-white">
-                  {weekdayPrice.toLocaleString("pt-BR", {
+                  {prices.weekday.toLocaleString("pt-BR", {
                     style: "currency",
                     currency: "BRL",
                   })}
@@ -89,10 +80,10 @@ const ServiceItem = ({
               </span>
               <span>
                 <span className="block text-[9px] font-semibold uppercase text-zinc-300">
-                  Qui a sáb
+                  Sex e sáb
                 </span>
                 <span className="text-sm font-bold text-white">
-                  {saturdayPrice.toLocaleString("pt-BR", {
+                  {prices.fridaySaturday.toLocaleString("pt-BR", {
                     style: "currency",
                     currency: "BRL",
                   })}

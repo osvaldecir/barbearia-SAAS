@@ -4,11 +4,13 @@ import Link from "next/link"
 import { signIn } from "next-auth/react"
 import { useMemo, useState } from "react"
 import { isBrazilianNationalHoliday } from "@/app/lib/brazilian-national-holidays"
+import { getServicePriceForWeekday } from "@/app/lib/service-pricing"
 
 type ReservationCalendarProps = {
   initialDate: string
   serviceId: string
   serviceName: string
+  servicePrice: number
   barbershopName: string
   serviceDuration: number
   closedDates: string[]
@@ -77,6 +79,7 @@ const ReservationCalendar = ({
   initialDate,
   serviceId,
   serviceName,
+  servicePrice,
   barbershopName,
   serviceDuration,
   closedDates,
@@ -88,7 +91,10 @@ const ReservationCalendar = ({
   const [submissionError, setSubmissionError] = useState("")
   const [requiresAuthentication, setRequiresAuthentication] = useState(false)
   const [whatsappProfileHref, setWhatsappProfileHref] = useState("")
-  const [confirmedBooking, setConfirmedBooking] = useState<string | null>(null)
+  const [confirmedBooking, setConfirmedBooking] = useState<{
+    date: string
+    price: number
+  } | null>(null)
   const [visibleMonth, setVisibleMonth] = useState(
     `${initialDate.slice(0, 7)}-01`,
   )
@@ -193,6 +199,12 @@ const ReservationCalendar = ({
     monthDates.find((date) => date >= initialDate && date <= lastDate) ??
     initialDate
   const selectedSlots = slotsByDate[activeDate] ?? []
+  const activeWeekday = new Date(`${activeDate}T12:00:00.000Z`).getUTCDay()
+  const activePrice = getServicePriceForWeekday(
+    serviceName,
+    servicePrice,
+    activeWeekday,
+  )
 
   const confirmBooking = async () => {
     if (!selectedTime || isSubmitting) {
@@ -217,7 +229,7 @@ const ReservationCalendar = ({
       const result = (await response.json()) as {
         error?: string
         requiresWhatsappProfile?: boolean
-        booking?: { date: string }
+        booking?: { date: string; price: number }
       }
 
       if (!response.ok || !result.booking) {
@@ -234,7 +246,10 @@ const ReservationCalendar = ({
         return
       }
 
-      setConfirmedBooking(result.booking.date)
+      setConfirmedBooking({
+        date: result.booking.date,
+        price: result.booking.price,
+      })
     } catch {
       setSubmissionError(
         "Não foi possível confirmar a reserva. Verifique sua conexão e tente novamente.",
@@ -349,6 +364,15 @@ const ReservationCalendar = ({
             month: "long",
           })}
         </p>
+        <p className="mt-2 text-sm text-zinc-300">
+          Valor do serviço:{" "}
+          <strong className="text-[#f7e257]">
+            {activePrice.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            })}
+          </strong>
+        </p>
         {selectedSlots.length > 0 ? (
           <div className="mt-5 grid grid-cols-3 gap-2">
             {selectedSlots.map((time) => (
@@ -387,7 +411,12 @@ const ReservationCalendar = ({
             disabled={isSubmitting}
             className="mt-5 w-full rounded-lg bg-[#f7e257] px-5 py-3 font-bold text-black transition hover:bg-[#ffec70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7e257] disabled:cursor-wait disabled:opacity-60"
           >
-            {isSubmitting ? "Confirmando..." : "Confirmar reserva"}
+            {isSubmitting
+              ? "Confirmando..."
+              : `Confirmar reserva · ${activePrice.toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}`}
           </button>
         )}
         {submissionError && (
@@ -431,7 +460,14 @@ const ReservationCalendar = ({
                 dateStyle: "long",
                 timeStyle: "short",
                 timeZone: businessTimeZone,
-              }).format(new Date(confirmedBooking))}
+              }).format(new Date(confirmedBooking.date))}
+            </p>
+            <p className="mt-1">
+              Valor:{" "}
+              {confirmedBooking.price.toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              })}
             </p>
             <Link
               href="/bookings"

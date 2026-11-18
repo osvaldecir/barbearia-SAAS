@@ -91,6 +91,7 @@ const ReservationPage = async ({ params }: ReservationPageProps) => {
           initialDate={startDate}
           serviceId={service.id}
           serviceName={service.name}
+          servicePrice={Number(service.price)}
           barbershopName={service.barbershop.name}
           serviceDuration={service.duration ?? 30}
           closedDates={closedDays.map((closedDay) =>

@@ -12,6 +12,10 @@ import {
   toCents,
 } from "@/app/lib/accounting"
 import { isBarbershopOwner } from "@/app/lib/barbershop-owner"
+import {
+  getBusinessWeekday,
+  getServicePriceForWeekday,
+} from "@/app/lib/service-pricing"
 import { db } from "@/_lib/prisma"
 import ExpenseDeleteButton from "./expense-delete-button"
 import ExpenseForm from "./expense-form"
@@ -33,6 +37,16 @@ const bookingStatusLabel = (status: string) => {
   if (status === "cancelled" || status === "canceled") return "Cancelado"
   return status
 }
+
+const getBookingPrice = (booking: {
+  date: Date
+  barbershopService: { name: string; price: { toString(): string } }
+}) =>
+  getServicePriceForWeekday(
+    booking.barbershopService.name,
+    Number(booking.barbershopService.price),
+    getBusinessWeekday(booking.date),
+  )
 
 export default async function AdminBookingsPage({
   searchParams,
@@ -110,7 +124,7 @@ export default async function AdminBookingsPage({
     (total, booking) =>
       total +
       (booking.status.toLowerCase() === "confirmed"
-        ? toCents(Number(booking.barbershopService.price))
+        ? toCents(getBookingPrice(booking))
         : 0),
     0,
   )
@@ -129,7 +143,7 @@ export default async function AdminBookingsPage({
     serviceTotals.set(
       name,
       (serviceTotals.get(name) ?? 0) +
-        toCents(Number(booking.barbershopService.price)),
+        toCents(getBookingPrice(booking)),
     )
   }
   const monthLabel = formatDate(range.start, {
@@ -294,7 +308,7 @@ export default async function AdminBookingsPage({
                     </p>
                     <p className="mt-1 text-sm text-[#f7e257]">
                       {formatCurrency(
-                        toCents(Number(booking.barbershopService.price)),
+                        toCents(getBookingPrice(booking)),
                       )}
                     </p>
                   </div>

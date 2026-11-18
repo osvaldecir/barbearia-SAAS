@@ -7,6 +7,10 @@ import {
   isValidAccountingMonth,
 } from "@/app/lib/accounting"
 import { isBarbershopOwner } from "@/app/lib/barbershop-owner"
+import {
+  getBusinessWeekday,
+  getServicePriceForWeekday,
+} from "@/app/lib/service-pricing"
 import { db } from "@/_lib/prisma"
 
 const csvCell = (value: string | number) => {
@@ -101,7 +105,11 @@ export async function GET(request: Request) {
       booking.status,
       formatAmount(
         booking.status.toLowerCase() === "confirmed"
-          ? Number(booking.barbershopService.price)
+          ? getServicePriceForWeekday(
+              booking.barbershopService.name,
+              Number(booking.barbershopService.price),
+              getBusinessWeekday(booking.date),
+            )
           : 0,
       ),
     ]),

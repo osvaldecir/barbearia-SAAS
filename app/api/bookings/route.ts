@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth"
 import { NextResponse } from "next/server"
 import { authOptions } from "@/app/lib/auth-options"
 import { isBrazilianNationalHoliday } from "@/app/lib/brazilian-national-holidays"
+import { getServicePriceForWeekday } from "@/app/lib/service-pricing"
 import { db } from "@/_lib/prisma"
 
 const businessTimeZone = "America/Sao_Paulo"
@@ -95,6 +96,8 @@ export async function POST(request: Request) {
       where: { id: body.serviceId },
       select: {
         id: true,
+        name: true,
+        price: true,
         duration: true,
         barbershopId: true,
       },
@@ -209,9 +212,20 @@ export async function POST(request: Request) {
     },
     select: { id: true, date: true },
   })
+  const price = getServicePriceForWeekday(
+    service.name,
+    Number(service.price),
+    localWeekday,
+  )
 
   return NextResponse.json(
-    { booking: { id: booking.id, date: booking.date.toISOString() } },
+    {
+      booking: {
+        id: booking.id,
+        date: booking.date.toISOString(),
+        price,
+      },
+    },
     { status: 201 },
   )
 }

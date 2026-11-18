@@ -2,6 +2,10 @@ import { getServerSession } from "next-auth"
 import { NextResponse } from "next/server"
 import { authOptions } from "@/app/lib/auth-options"
 import { isBarbershopOwner } from "@/app/lib/barbershop-owner"
+import {
+  getBusinessWeekday,
+  getServicePriceForWeekday,
+} from "@/app/lib/service-pricing"
 import { db } from "@/_lib/prisma"
 
 type RouteContext = { params: { id: string } }
@@ -49,7 +53,8 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     },
     select: {
       id: true,
-      barbershopService: { select: { price: true } },
+      date: true,
+      barbershopService: { select: { name: true, price: true } },
     },
   })
   if (!booking) {
@@ -59,6 +64,11 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     )
   }
 
+  const price = getServicePriceForWeekday(
+    booking.barbershopService.name,
+    Number(booking.barbershopService.price),
+    getBusinessWeekday(booking.date),
+  )
   const result = await db.booking.updateMany({
     where: {
       id: booking.id,
@@ -67,7 +77,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     },
     data: {
       paidAt: new Date(),
-      paidAmount: booking.barbershopService.price,
+      paidAmount: price,
       paymentMethod: body.paymentMethod,
     },
   })
