@@ -45,13 +45,14 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 Após o primeiro login com Google, o cliente informa o celular e pode autorizar
 explicitamente lembretes pelo WhatsApp. A autorização é opcional; sem ela as
-reservas não recebem mensagens. A Vercel chama diariamente
-`/api/cron/whatsapp-reminders` a cada minuto para enviar dois lembretes:
-às 08:00 (horário de São Paulo) no dia da reserva e uma hora antes do horário
-marcado. O envio é feito apenas para reservas confirmadas e com consentimento,
-com registros separados para evitar repetição. Quem já estiver conectado sem
-celular será solicitado a completar o cadastro antes de reservar. A execução a
-cada minuto requer o plano Pro da Vercel.
+reservas não recebem mensagens. No plano Hobby, a Vercel chama
+`/api/cron/whatsapp-reminders` diariamente às 08:00 (horário de São Paulo) para
+enviar o lembrete do dia da reserva. O lembrete de uma hora antes não é garantido
+com essa frequência; para executá-lo de forma confiável, é necessário configurar
+o cron a cada minuto e usar o plano Pro da Vercel. O envio é feito apenas para
+reservas confirmadas e com consentimento, com registros separados para evitar
+repetição. Quem já estiver conectado sem celular será solicitado a completar o
+cadastro antes de reservar.
 
 Antes de ativar em produção:
 
@@ -70,6 +71,7 @@ Antes de ativar em produção:
 4. Faça deploy na Vercel. Defina `CRON_SECRET` também nas variáveis do projeto
    Vercel para que o agendamento envie o cabeçalho de autorização.
 
-O cron roda a cada minuto. Reservas sem consentimento explícito não recebem
-mensagem. Falhas de envio aparecem nos logs da função e podem ser reprocessadas
-chamando a rota novamente com o segredo.
+No plano Hobby, o cron roda diariamente às 08:00 no horário de São Paulo.
+Reservas sem consentimento explícito não recebem mensagem. Falhas de envio
+aparecem nos logs da função e podem ser reprocessadas chamando a rota novamente
+com o segredo.
