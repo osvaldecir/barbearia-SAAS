@@ -24,6 +24,8 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 Qualquer conta Google pode fazer login. Somente `manocaatanduva@gmail.com` e `wendelschineider17@gmail.com` têm acesso à Gestão, em `/admin/agendamentos`, que exibe os agendamentos da barbearia Shinider.
 
+As páginas públicas de [Política de Privacidade](./app/privacidade/page.tsx) e [Termos de Uso](./app/termos/page.tsx) são usadas na configuração do consentimento OAuth do Google.
+
 Na área Gestão, o relatório mensal separa agendamentos previstos, pagamentos registrados e despesas lançadas. O proprietário pode registrar a forma e a data do recebimento, adicionar ou remover despesas e exportar o movimento do mês em CSV. O valor previsto usa o preço atual do serviço; o pagamento registrado guarda o valor do serviço no momento do registro. A migração `20261116180000_add_barbershop_accounting` deve ser aplicada antes de publicar a atualização (`npx prisma migrate deploy`).
 
 ## Learn More
