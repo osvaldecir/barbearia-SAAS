@@ -22,7 +22,7 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 ## Acesso do proprietário
 
-Qualquer conta Google pode fazer login. Somente `manocaatanduva@gmail.com` e `wendelschineider17@gmail.com` têm acesso à Gestão, em `/admin/agendamentos`, que exibe os agendamentos da barbearia Shinider.
+Qualquer conta Google pode fazer login. Somente `manocatanduva@gmail.com` e `wendelschineider17@gmail.com` têm acesso à Gestão, em `/admin/agendamentos`, que exibe os agendamentos da barbearia Shinider.
 
 As páginas públicas de [Política de Privacidade](./app/privacidade/page.tsx) e [Termos de Uso](./app/termos/page.tsx) são usadas na configuração do consentimento OAuth do Google.
 

@@ -1,5 +1,5 @@
 const ownerEmails = new Set([
-  "manocaatanduva@gmail.com",
+  "manocatanduva@gmail.com",
   "wendelschineider17@gmail.com",
 ])
 
