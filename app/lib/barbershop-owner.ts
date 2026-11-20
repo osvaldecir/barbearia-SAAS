@@ -1,11 +1,8 @@
-export const isBarbershopOwner = (email?: string | null) => {
-  const ownerEmails = [
-    process.env.BARBERSHOP_OWNER_EMAIL,
-    "wendelschineider17@gmail.com",
-  ]
-    .flatMap((value) => value?.split(",") ?? [])
-    .map((value) => value.trim().toLowerCase())
-    .filter(Boolean)
+const ownerEmails = new Set([
+  "manocaatanduva@gmail.com",
+  "wendelschineider17@gmail.com",
+])
 
-  return ownerEmails.includes(email?.trim().toLowerCase() ?? "")
+export const isBarbershopOwner = (email?: string | null) => {
+  return ownerEmails.has(email?.trim().toLowerCase() ?? "")
 }
