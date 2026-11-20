@@ -21,6 +21,7 @@ import ExpenseDeleteButton from "./expense-delete-button"
 import ExpenseForm from "./expense-form"
 import ClosedDaysManager from "./closed-days-manager"
 import PaymentButton from "./payment-button"
+import BookingDeleteButton from "./booking-delete-button"
 
 type AdminBookingsPageProps = {
   searchParams: { month?: string }
@@ -312,23 +313,29 @@ export default async function AdminBookingsPage({
                       )}
                     </p>
                   </div>
-                  {booking.status.toLowerCase() === "confirmed" ||
-                  booking.paidAt ? (
-                    <PaymentButton
+                  <div className="flex flex-wrap items-start gap-2">
+                    {booking.status.toLowerCase() === "confirmed" ||
+                    booking.paidAt ? (
+                      <PaymentButton
+                        bookingId={booking.id}
+                        paidAt={booking.paidAt}
+                        paidAmount={
+                          booking.paidAmount === null
+                            ? null
+                            : Number(booking.paidAmount)
+                        }
+                        paymentMethod={booking.paymentMethod}
+                      />
+                    ) : (
+                      <span className="text-xs text-zinc-500">
+                        Sem pagamento registrado
+                      </span>
+                    )}
+                    <BookingDeleteButton
                       bookingId={booking.id}
-                      paidAt={booking.paidAt}
-                      paidAmount={
-                        booking.paidAmount === null
-                          ? null
-                          : Number(booking.paidAmount)
-                      }
-                      paymentMethod={booking.paymentMethod}
+                      hasPayment={booking.paidAt !== null}
                     />
-                  ) : (
-                    <span className="text-xs text-zinc-500">
-                      Sem pagamento registrado
-                    </span>
-                  )}
+                  </div>
                 </li>
               ))}
             </ul>

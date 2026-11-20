@@ -53,7 +53,8 @@ const WhatsappProfileForm = ({ returnTo }: WhatsappProfileFormProps) => {
         </p>
         <h1 className="mt-2 text-2xl font-semibold">Seu celular</h1>
         <p className="mt-3 text-sm leading-6 text-zinc-400">
-          Informe seu WhatsApp para concluir o cadastro e fazer reservas.
+          No primeiro acesso, informe seu WhatsApp para concluir o cadastro.
+          Se autorizar abaixo, você receberá lembretes dos seus agendamentos.
         </p>
 
         <form onSubmit={saveProfile} className="mt-6 space-y-4">
@@ -85,8 +86,8 @@ const WhatsappProfileForm = ({ returnTo }: WhatsappProfileFormProps) => {
               className="mt-1 accent-[#f7e257]"
             />
             <span>
-              Autorizo receber pelo WhatsApp um lembrete no dia dos meus
-              agendamentos. Posso continuar sem autorizar.
+              Autorizo receber pelo WhatsApp um lembrete às 8h da manhã no dia
+              dos meus agendamentos. Posso continuar sem autorizar.
             </span>
           </label>
 

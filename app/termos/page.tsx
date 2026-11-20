@@ -43,8 +43,8 @@ const TermsPage = () => (
         <p className="leading-7 text-zinc-300">
           O fornecimento do celular é necessário para concluir o cadastro e
           reservar. Receber lembretes pelo WhatsApp é opcional: eles só são
-          enviados se você autorizar. Você pode continuar usando o serviço sem
-          autorizar lembretes.
+          enviados se você autorizar, às 8h da manhã no dia do agendamento.
+          Você pode continuar usando o serviço sem autorizar lembretes.
         </p>
       </section>
 

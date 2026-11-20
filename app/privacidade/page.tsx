@@ -30,10 +30,11 @@ const PrivacyPage = () => (
         </p>
         <p className="leading-7 text-zinc-300">
           O número de WhatsApp é usado para lembretes somente se você der
-          autorização expressa. Essa autorização é opcional e pode ser retirada
-          pelo contato indicado nesta página. Registros de pagamento de
-          agendamentos podem incluir valor, data e forma de pagamento; não
-          coletamos dados de cartão por meio do app.
+          autorização expressa. Quando autorizados, os lembretes são enviados
+          às 8h da manhã no dia do agendamento. Essa autorização é opcional e
+          pode ser retirada pelo contato indicado nesta página. Registros de
+          pagamento de agendamentos podem incluir valor, data e forma de
+          pagamento; não coletamos dados de cartão por meio do app.
         </p>
       </section>
 
