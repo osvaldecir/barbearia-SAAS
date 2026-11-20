@@ -7,7 +7,7 @@ type UserGreetingProps = {
 }
 
 const UserGreeting = ({ name, image }: UserGreetingProps) => {
-  const displayName = name || "Fazer login"
+  const displayName = name || "Faça seu login"
 
   return (
     <div className="flex items-center gap-3">
