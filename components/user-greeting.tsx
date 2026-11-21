@@ -7,7 +7,11 @@ type UserGreetingProps = {
 }
 
 const UserGreeting = ({ name, image }: UserGreetingProps) => {
-  const displayName = name || "Faça seu login"
+  const normalizedName = name?.trim()
+  const isTestAccount =
+    normalizedName?.toLocaleLowerCase("pt-BR") === "cliente tester"
+  const displayName =
+    !normalizedName || isTestAccount ? "Faça seu login" : normalizedName
 
   return (
     <div className="flex items-center gap-3">
